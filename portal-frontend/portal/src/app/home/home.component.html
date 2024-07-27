@@ -1,0 +1,38 @@
+<div class="home-container">
+    <div class="total-employees">
+      <span>Total Employees: {{usersCount}}</span>
+      
+    </div>
+  
+    <div class="employees-data">
+      <div class="employees-search">
+        <!-- Search form or input can go here -->
+        <input type="text" placeholder="Search Employees">
+      </div>
+  
+      <div class="employees-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Employee Name</th>
+              <th>Email</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Total Working Hours</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Example rows; replace with dynamic content -->
+            <tr *ngFor="let user of users">
+              <td (click)="goToAttendanceOfEmployee(user.name)">{{user.name}}</td>
+              <td>{{user.email}}</td>
+              <td>{{getFirstPunchTime(user)}}</td>
+              <td>{{getlastPunchTime(user)}}</td>
+              <td>8 hrs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

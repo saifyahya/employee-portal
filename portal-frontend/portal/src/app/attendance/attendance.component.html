@@ -1,0 +1,49 @@
+<div class="attendance-container">
+  <button (click)="prevWeek()">Previous</button>
+  <button (click)="nextWeek()">Next</button>
+  <span>{{weeks[0].toDateString()}} - {{weeks[weeks.length-1].toDateString()}}</span>
+ 
+
+  <div class="days" *ngFor="let day of weeks">
+    
+      {{ day.toDateString() }}
+      <span *ngFor="let punch of punches" class="punches">
+          <span *ngIf="isPunchInThisDay(punch, day)">
+              {{ formatPunchTime(punch.punchTime) }}
+          </span>
+          <img src="../../assets/images/home-vector-icon.png" *ngIf="isPunchInThisDay(punch, day) && punch.type==='home'">
+      </span>
+      <div class="day-summary">
+          <div>
+              <strong>Working Hours: </strong> 
+              <span>{{ workingHours.get(day.toISOString().split('T')[0])?.[0] }}h {{ workingHours.get(day.toISOString().split('T')[0])?.[1] }}m</span>
+              <p class="reminders" *ngIf="workReminder.has(day.toISOString().split('T')[0])">{{ workReminder.get(day.toISOString().split('T')[0]) }}</p>
+            </div>
+          <div>
+              <strong>Breaking Hours: </strong> 
+              <span>{{ BreakingHours.get(day.toISOString().split('T')[0])?.[0] }}h {{ BreakingHours.get(day.toISOString().split('T')[0])?.[1] }}m</span>
+              <p class="reminders" *ngIf="breakReminder.has(day.toISOString().split('T')[0])">{{ breakReminder.get(day.toISOString().split('T')[0]) }}</p>            </div>
+      </div>
+  </div>
+
+  <div class="summary">
+      <h3>Summary</h3>
+
+
+      <!-- <div class="total-hours">
+        <div>
+            <strong>Total Working Hours:</strong> 
+            <span>{{ calculateTotalHours(workingHours) }}</span>
+        </div>
+        <div>
+            <strong>Total Breaking Hours:</strong> 
+            <span>{{ calculateTotalHours(BreakingHours) }}</span>
+        </div>
+    </div> -->
+
+    <div class="reminders">
+      <p *ngFor="let reminder of getWorkReminders()">{{ reminder }}</p>
+      <p *ngFor="let reminder of getBreakReminders()">{{ reminder }}</p>
+  </div>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<span>{{weeks[0].toDateString()+ " - "+weeks[weeks.length-1].toDateString()}}</span>
+<button (click)="prevWeek()">Previous</button><button (click)="nextWeek()">Next</button>
+<button (click)="exportChartToPDF()">Export tp PDF</button>
+<div class="chart-container" style="width: 300px; height: 300px;">
+    <canvas  id="donutChart"  >{{ chart }}</canvas>
+</div>
+
+<div class="chart-container" >
+    <canvas  id="barChart"  >{{ barChart }}</canvas>
+</div>
