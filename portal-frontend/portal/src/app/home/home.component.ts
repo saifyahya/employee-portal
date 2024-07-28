@@ -13,6 +13,30 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit, DoCheck{
 
+changeCollectedUsers() {
+this.getAllUsers();
+this.getUsersByDepartment()
+}
+
+
+
+ getUsersByDepartment(){
+  if(this.selected_department==="All")
+    this.getAllUsers();
+  else
+   this.userService.getUsersBYDepartment(this.mapDepartmentToEnums(this.selected_department)).subscribe((data)=>{this.users=data
+
+   });
+  
+}
+
+getUsersCountByDepartment(){
+  if (this.selected_department==="All")
+  this.getUsersCount();
+  else
+  this.userService.getUsersCountByDepartment(this.mapDepartmentToEnums(this.selected_department))
+}
+
   ngDoCheck(): void {
    // console.log("home reinitializd");
 
@@ -20,12 +44,15 @@ export class HomeComponent implements OnInit, DoCheck{
   users!:User[];
   usersCount:number=0;
 
+  departments:string[]=["All","Software Development","QA","Mobile Development","BA","HR","IT","Product Development","Marketing"]
+  selected_department: string=this.departments[0];
+
 constructor(private userService:UserService, private punshservice:PunchService,private router:Router){
 }
 
 ngOnInit(): void {
-    this.getAllUsers();
-    this.getUsersCount();
+  this.getAllUsers();
+  this.getUsersByDepartment()
 
    // console.log("home reinitializd");
     
@@ -42,7 +69,7 @@ getAllUsers():void{
   })
 }
 
-getUserPunches(user:User):  Punch[]{
+getUserPunchesSorted(user:User):  Punch[]{
   const sortedPunches:Punch[] = user.punches.sort((a, b) => {
     const dateA = new Date(a.punchDate + 'T' + a.punchTime);
     const dateB = new Date(b.punchDate + 'T' + b.punchTime);
@@ -54,8 +81,8 @@ getUserPunches(user:User):  Punch[]{
 }
 
 getFirstPunchTime(user:User): string{
-  const lastPunch= this.getUserPunches(user)[this.getUserPunches(user).length-1]
-  const sortedPunches= this.getUserPunches(user).filter((p)=>p.punchDate===lastPunch.punchDate);
+  const lastPunch= this.getUserPunchesSorted(user)[this.getUserPunchesSorted(user).length-1]
+  const sortedPunches= this.getUserPunchesSorted(user).filter((p)=>p.punchDate===lastPunch.punchDate);
      let firstTimePunch=''
    if(sortedPunches.length>0)
      firstTimePunch=sortedPunches[0].punchTime;
@@ -64,12 +91,11 @@ getFirstPunchTime(user:User): string{
 }
 
 getlastPunchTime(user:User): string{
-  const lastPunch= this.getUserPunches(user)[this.getUserPunches(user).length-1]
-  const sortedPunches= this.getUserPunches(user).filter((p)=>p.punchDate===lastPunch.punchDate);
+  const lastPunch= this.getUserPunchesSorted(user)[this.getUserPunchesSorted(user).length-1]
+  const sortedPunchesByDATE= this.getUserPunchesSorted(user).filter((p)=>p.punchDate===lastPunch.punchDate);
   let lastTimePunch=''
-
-  if(sortedPunches.length>1)
-    lastTimePunch=sortedPunches[sortedPunches.length-1].punchTime;
+  if(sortedPunchesByDATE.length>1)
+    lastTimePunch=sortedPunchesByDATE[sortedPunchesByDATE.length-1].punchTime;
   lastTimePunch= lastTimePunch.substring(0,lastTimePunch.length-3);
  return lastTimePunch;
 }
@@ -77,6 +103,32 @@ getlastPunchTime(user:User): string{
 goToAttendanceOfEmployee(employeeName: string){
   this.punshservice.currentUsername=employeeName;
   this.router.navigateByUrl("/punches")
+}
+
+deleteUser(userEmail: string) {
+  this.userService.deleteByEmail(userEmail).subscribe({
+    next:(data)=>{alert("User deleted successfully")},
+    error:(error)=>{alert("Failed to delete User")}
+  }
+  )
+  }
+
+
+mapDepartmentToEnums( departmentEnum:string):string{
+  if(departmentEnum==="Mobile Development")
+    return "MOBILE_DEVELOPMENT"
+  if(departmentEnum==="Software Development")
+    return "SOFTWARE_DEVELOPMENT"
+  return departmentEnum
+}
+
+
+formatDepartmentEnums( departmentEnum:string):string{
+  if(departmentEnum==="MOBILE_DEVELOPMENT")
+    return "Mobile Development"
+  if(departmentEnum==="SOFTWARE_DEVELOPMENT")
+    return "Software Development"
+  return departmentEnum
 }
 
 }

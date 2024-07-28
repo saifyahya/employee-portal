@@ -8,6 +8,11 @@
       <div class="employees-search">
         <!-- Search form or input can go here -->
         <input type="text" placeholder="Search Employees">
+
+        <select [(ngModel)]="selected_department" (change)="changeCollectedUsers()">
+          <option *ngFor="let depart of departments" [ngValue]="depart">{{depart}}</option>
+        </select>
+        
       </div>
   
       <div class="employees-table">
@@ -16,9 +21,12 @@
             <tr>
               <th>Employee Name</th>
               <th>Email</th>
-              <th>Check-In</th>
-              <th>Check-Out</th>
-              <th>Total Working Hours</th>
+              <th>Department</th>
+              <th>Position</th>
+              <th>Joining Date</th>
+              <th> Latest Checkin </th>
+              <th> Latest Checkout </th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -26,9 +34,12 @@
             <tr *ngFor="let user of users">
               <td (click)="goToAttendanceOfEmployee(user.name)">{{user.name}}</td>
               <td>{{user.email}}</td>
+              <td>{{formatDepartmentEnums(user.department)}}</td>
+              <td>{{user.position}}</td>
+              <td>{{user.joiningDate}}</td>
               <td>{{getFirstPunchTime(user)}}</td>
               <td>{{getlastPunchTime(user)}}</td>
-              <td>8 hrs</td>
+              <td (click)="deleteUser(user.email)">delete</td>
             </tr>
           </tbody>
         </table>
