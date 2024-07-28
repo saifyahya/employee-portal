@@ -13,6 +13,9 @@ import { log } from 'console';
   styleUrls: ['./calender.component.css']
 })
 export class CalenderComponent implements OnInit, DoCheck {
+showData() {
+this.showCharts=!this.showCharts;
+}
   chart: any;
   barChart: any;
 
@@ -22,6 +25,7 @@ export class CalenderComponent implements OnInit, DoCheck {
 
   firstDayofThisWeek!: Date;
   weeks: Date[] = [];
+showCharts: boolean=false;
 
   constructor(private punchService: PunchService, private userService: UserService) { }
 

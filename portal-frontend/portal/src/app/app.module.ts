@@ -8,6 +8,7 @@ import { HeaderComponent } from './header/header.component';
 import {  HttpClientModule } from '@angular/common/http';
 import { CalenderComponent } from './calender/calender.component';
 import { AttendanceComponent } from './attendance/attendance.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { AttendanceComponent } from './attendance/attendance.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     provideClientHydration(),
