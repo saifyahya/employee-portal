@@ -19,7 +19,7 @@ public interface PunchRepository extends JpaRepository<Punch, Long> {
 
     long countByUser_Name(String username);
 
-    @Query("SELECT p FROM Punch p JOIN p.user u WHERE u.name =?1 AND p.punchDate >= ?2 AND p.punchDate <= ?3 ORDER BY p.punchDate ASC, p.punchTime ASC ")
+    @Query("SELECT p FROM Punch p JOIN p.user u WHERE u.name =?1 AND p.punchDate BETWEEN ?2 AND ?3 ORDER BY p.punchDate ASC, p.punchTime ASC ")
     List<Punch> findAllByUser_NameAndPunchDatePeriodOrderByPunchTimeAsc(String name,LocalDate startDate, LocalDate endDate);
 
 }

@@ -39,7 +39,9 @@ public class PunchController {
     @PostMapping("/punches")
     public ResponseEntity<ResponseDto> SavePunch(@RequestBody PunchDto punchDto, @RequestParam String email) {
         punchService.savePunch(punchDto, email);
-        return new ResponseEntity<>(new ResponseDto("Punch Saved Successfully", HttpStatus.OK.toString()), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto(true, HttpStatus.OK.toString()), HttpStatus.OK);
     }
+
+
 
 }
