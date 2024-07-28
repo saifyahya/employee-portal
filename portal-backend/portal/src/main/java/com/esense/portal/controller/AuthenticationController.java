@@ -19,12 +19,12 @@ public class AuthenticationController {
     @PostMapping("/users")
     public ResponseEntity<ResponseDto> Signup(@RequestBody SignupRequest request){
         authenticationService.saveUser(request);
-        return new ResponseEntity<>(new ResponseDto("user Saved Successfully",HttpStatus.OK.toString()), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto(true,HttpStatus.OK.toString()), HttpStatus.OK);
     }
 
     @GetMapping("/users")
     public ResponseEntity<ResponseDto> Signin(@RequestBody SigninRequest request){
         String message = authenticationService.signin(request);
-        return new ResponseEntity<>(new ResponseDto(message,HttpStatus.OK.toString()), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDto(true,message), HttpStatus.OK);
     }
 }
