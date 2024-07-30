@@ -10,10 +10,10 @@ import java.util.Optional;
 public interface IUserService {
 
     long getAllUsersCount();
-    long getUsersCountByDepartment(String name);
+    long getUsersCountByDepartment(DepartmentEnum name);
     List<UserDto> getAllUsers();
 
-    List<UserDto> getUsersByDepartment(String name);
+    List<UserDto> getUsersByDepartment(DepartmentEnum name);
 
 
     List<UserDto> getUsersContainingName(String name);

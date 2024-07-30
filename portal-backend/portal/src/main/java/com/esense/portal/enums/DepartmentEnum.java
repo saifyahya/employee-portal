@@ -24,7 +24,7 @@ public enum DepartmentEnum {
 
     public static DepartmentEnum getEnumValue(String departmentName) {
         for (DepartmentEnum departmentEnum : DepartmentEnum.values()) {
-            if (departmentEnum.getValue().equals(departmentName)) {
+            if (departmentEnum.getValue().equalsIgnoreCase(departmentName)) {
                 return departmentEnum;
             }
         }

@@ -38,6 +38,8 @@ public class User extends BaseEntity{
     private List<Role> roles;
 
     private String position;
+    private String phoneNumber;
+
 
     private boolean isActive;
 
