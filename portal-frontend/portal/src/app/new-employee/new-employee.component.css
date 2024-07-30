@@ -1,0 +1,112 @@
+*{
+    font-family: "Montserrat", sans-serif;
+
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    font-family: "Montserrat", sans-serif;
+}
+
+
+.signin-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 800px; /* Increased width for two columns */
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin: 75px auto;
+}
+
+.signin-card {
+    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.data-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    width: 48%;
+}
+
+.name, .email, .phoneNumber, .password, .department, .date, .position, .passwordConfirm,h2 {
+    margin-bottom: 15px;
+}
+
+label {
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: bold;
+}
+
+input, .datepicker-button, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fff;
+}
+
+.datepicker-button {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+}
+
+input:focus {
+    border-color: #6a11cb;
+    outline: none;
+    box-shadow: 0 0 5px rgba(106, 17, 203, 0.5);
+}
+
+.validation-container {
+    display: flex;
+    flex-direction: column;
+    align-self: flex-start;
+    margin-bottom: 5px;
+}
+
+.validation-container div {
+    font-size: small;
+    margin-bottom: 3px;
+    color: red;
+    padding: 3px;
+}
+
+
+.submit-button{
+    width: 200px;
+    padding: 2px;
+}
+
+.validation-container .password-valid p {
+    margin: 0;
+}

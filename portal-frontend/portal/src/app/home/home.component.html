@@ -7,7 +7,7 @@
     <div class="employees-data">
       <div class="employees-search">
         <!-- Search form or input can go here -->
-        <input type="text" placeholder="Search Employees">
+        <input type="text" placeholder="Search Employees" [(ngModel)]="searchedEmployee" (input)="searchEmployeeByName()">
 
         <select [(ngModel)]="selected_department" (change)="changeCollectedUsers()">
           <option *ngFor="let depart of departments" [ngValue]="depart">{{depart}}</option>
@@ -32,18 +32,19 @@
           <tbody>
             <!-- Example rows; replace with dynamic content -->
             <tr *ngFor="let user of users">
-              <td (click)="goToAttendanceOfEmployee(user.name)">{{user.name}}</td>
+              <td (click)="goToAttendanceOfEmployee(user.name,user.email)" class="employee-checkins">{{user.name}}</td>
               <td>{{user.email}}</td>
               <td>{{formatDepartmentEnums(user.department)}}</td>
               <td>{{user.position}}</td>
-              <td>{{user.joiningDate}}</td>
-              <td>{{getFirstPunchTime(user)}}</td>
-              <td>{{getlastPunchTime(user)}}</td>
-              <td (click)="deleteUser(user.email)">delete</td>
+              <td>{{user.joiningDate.toString().split("T")[0]}}</td>
+              <td>{{getFirstPunchTime(user)[0] || ""}} <br> {{getFirstPunchTime(user)[1]}} </td>
+              <td>{{getlastPunchTime(user)[0] || ""}} <br> {{getlastPunchTime(user)[1]}} </td>
+              <td (click)="deleteUser(user.email)" class="employee-delete">delete user Account</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
   </div>
+  <app-calender></app-calender>
   

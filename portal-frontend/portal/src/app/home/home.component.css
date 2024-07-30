@@ -22,6 +22,10 @@
     flex-direction: column;
   }
   
+.employee-checkins, .employee-delete{
+  cursor: pointer;
+}
+
   .employees-search {
     display: flex;
     justify-content: flex-end;

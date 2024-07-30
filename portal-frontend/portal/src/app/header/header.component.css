@@ -4,6 +4,7 @@
     align-items: center;
     background-color: #f8f9fa; /* Light background color */
     padding: 0.5rem 1rem; /* Adjust padding as needed */
+    user-select: none;
   }
   
   .custom-logo {
@@ -11,33 +12,38 @@
     align-items: center;
   }
   
-  .custom-toggler {
-    display: none; /* Hide by default, can be styled if needed for responsiveness */
-  }
+
   
   .custom-collapse {
     display: flex;
     flex-grow: 1;
     justify-content: flex-end; /* Align items to the right */
   }
+
+  .custom-collapse  {
+cursor: pointer;
+  }
+
+  .custom-collapse span {
+    cursor: auto;
+    font-weight: light;
+    font-style: italic;
+      }
   
   .custom-navbar-nav {
     display: flex;
   }
   
-  .custom-nav-item {
+  .custom-nav-item,span {
     margin-left: 1rem; /* Spacing between items */
     text-decoration: none;
     color: #000; /* Text color */
     padding: 0.5rem; /* Adjust padding as needed */
   }
   
-  .custom-nav-item.active {
+  .custom-nav-item.active , .is-active{
     font-weight: bold; /* Highlight active item */
   }
   
-  .custom-nav-item.disabled {
-    color: #6c757d; /* Disabled text color */
-    pointer-events: none; /* Disable clicks */
-  }
+ 
   

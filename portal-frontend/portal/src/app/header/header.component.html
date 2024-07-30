@@ -1,16 +1,18 @@
 <nav class="custom-navbar">
-    <a class="custom-logo" href="#">
-      <img src="../../assets/images/esense-logo.png" width="70" height="30" alt="">
+    <a class="custom-logo" routerLink="">
+      <img src="../../assets/images/esense-logo.png" width="70" height="30" alt="logo" (click)="goToHome()">
     </a>
-    <button class="custom-toggler" type="button">
-      <span class="custom-toggler-icon"></span>
-    </button>
+   
+
     <div class="custom-collapse">
+
       <div class="custom-navbar-nav">
-        <a class="custom-nav-item active" href="#">Home</a>
-        <a class="custom-nav-item" href="#">Features</a>
-        <a class="custom-nav-item" href="#">Pricing</a>
-        <a class="custom-nav-item disabled" href="#">Disabled</a>
+        <span>{{getCurrentUsername()}}</span>
+        <a class="custom-nav-item" routerLink="/attendance" routerLinkActive="is-active">Punches</a>
+        <a class="custom-nav-item" routerLink="/addEmpolyee" *ngIf="isManager()" routerLinkActive="is-active">Add New Employee</a>
+        <a class="custom-nav-item" routerLink="/signin" *ngIf="!checkLogin()" routerLinkActive="is-active">Login</a>
+        <a class="custom-nav-item" routerLink="/dashboard" *ngIf="isManager()" routerLinkActive="is-active">Dashboard</a>
+        <a class="custom-nav-item" (click)="logout()" *ngIf="checkLogin()" routerLinkActive="is-active">Logout</a>
       </div>
     </div>
   </nav>

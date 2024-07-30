@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PunchService } from '../service/punch-service/punch.service';
 import { Punch } from '../model/punch';
+import { AuthenticationService } from '../service/authentication-service/authentication.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-attendance',
@@ -9,6 +12,63 @@ import { Punch } from '../model/punch';
   providers: []
 })
 export class AttendanceComponent implements OnInit {
+toggoleTimePicker(event: MouseEvent) {
+event.preventDefault();
+this.viewTimePicker=!this.viewTimePicker;
+}
+pickedPunchDate: string='';
+viewTimePicker: boolean=false;
+pickedPunchTime: string='';
+toggoleDatePicker(event: MouseEvent) {
+event.preventDefault;
+this.viewDatePicker=!this.viewDatePicker;
+}
+viewMyPunches() {
+this.punchService.currentUsername.next(this.authService.getCurrentUserName())
+}
+  @ViewChild('punchModal', { static: true }) punchModal!: TemplateRef<any>;
+  constructor(private punchService: PunchService,private authService:AuthenticationService,private modalService: NgbModal) {
+  }
+  openPunchModal() {
+    this.modalService.open(this.punchModal);
+  }
+punchType: string="office";
+myDateValue: Date = new Date();
+myTime: Date = new Date();
+isMeridian: boolean = true;
+punchNow() {
+this.punchService.punchNow(this.punchType).subscribe({
+  next:(data)=>{console.log(data);
+  },
+  error:(error)=>{console.log(error);
+  }
+});
+}
+addPunch() {
+  const type= this.punchType;
+  const punchDate=this.pickedPunchDate;
+  const punchTime=this.pickedPunchTime;
+  const userEmail = this.getUserEmailToAddPunchByAdmin();
+this.punchService.addNewPunch(punchDate,punchTime,type,userEmail).subscribe({
+  next:(data)=>{console.log(data);
+  },
+  error:(error)=>{console.log(error);
+  }
+});
+}
+
+viewDatePicker= false;
+
+
+
+getUserEmailToAddPunchByAdmin():string{
+  return this.punchService.UserEmailToAddPunchFromAdmin;
+}
+
+ngAfterViewInit(): void {
+}
+
+
   isPunchInThisDay(punch: Punch, date: Date): boolean {
 
     const newDate = new Date(punch.punchDate);
@@ -42,17 +102,17 @@ export class AttendanceComponent implements OnInit {
   workReminder : Map<string, string> = new Map<string, string>();
   breakReminder : Map<string, string> = new Map<string, string>();
 
-  constructor(private punchService: PunchService) {
-  }
+
 
 
   async getUserPunches() {
     const startDate = this.weeks[0].toISOString().split("T")[0];
     const endDate = this.weeks[this.weeks.length - 1].toISOString().split("T")[0];
-
+    let currentUsername='';
+this.punchService.currentUsername.subscribe((data)=>currentUsername=data);
     try {
       const data = await this.punchService.getUserPunchesByDatePeriodOrderedAsc(
-        this.punchService.currentUsername,
+        currentUsername,
         startDate,
         endDate
       ).toPromise();
@@ -254,6 +314,12 @@ export class AttendanceComponent implements OnInit {
   getBreakReminders(): string|undefined {
     const currentDate = new Date().toISOString().split("T")[0];
     return this.breakReminder.get(currentDate+'')  }
+
+
+
+    isManager():Boolean{
+      return this.authService.isManager();
+    }
 }
 
 

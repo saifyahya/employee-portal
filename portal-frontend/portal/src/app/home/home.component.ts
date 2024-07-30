@@ -12,10 +12,17 @@ import { Router } from '@angular/router';
   providers:[]
 })
 export class HomeComponent implements OnInit, DoCheck{
+searchEmployeeByName() {
+this.userService.getUsersContaingName(this.searchedEmployee).subscribe((data=>{
+  this.users=data;
+  this.usersCount=this.users.length;
+}))
+}
+searchedEmployee: any;
 
 changeCollectedUsers() {
-this.getAllUsers();
 this.getUsersByDepartment()
+// this.getUsersCountByDepartment()
 }
 
 
@@ -24,18 +31,19 @@ this.getUsersByDepartment()
   if(this.selected_department==="All")
     this.getAllUsers();
   else
-   this.userService.getUsersBYDepartment(this.mapDepartmentToEnums(this.selected_department)).subscribe((data)=>{this.users=data
-
+   this.userService.getUsersBYDepartment(this.selected_department).subscribe((data)=>{
+  this.users=data
+  this.usersCount=this.users.length;
    });
   
 }
 
-getUsersCountByDepartment(){
-  if (this.selected_department==="All")
-  this.getUsersCount();
-  else
-  this.userService.getUsersCountByDepartment(this.mapDepartmentToEnums(this.selected_department))
-}
+// getUsersCountByDepartment(){
+//   if (this.selected_department==="All")
+//   this.getUsersCount();
+//   else
+//   this.userService.getUsersCountByDepartment(this.selected_department).subscribe((data)=>this.usersCount=data)
+// }
 
   ngDoCheck(): void {
    // console.log("home reinitializd");
@@ -51,21 +59,21 @@ constructor(private userService:UserService, private punshservice:PunchService,p
 }
 
 ngOnInit(): void {
-  this.getAllUsers();
-  this.getUsersByDepartment()
+ this.getUsersByDepartment();
+//  this.getUsersCountByDepartment();
 
    // console.log("home reinitializd");
     
 }
 
-getUsersCount():void{
-  this.userService.getAllUsersCount().subscribe((resposne )=>{this.usersCount=resposne;
-    console.log(resposne)
-  })
-}
+// getUsersCount():void{
+//   this.userService.getAllUsersCount().subscribe((resposne )=>{this.usersCount=resposne;
+//     console.log(resposne)
+//   })
+// }
 
 getAllUsers():void{
-  this.userService.getAllUsers().subscribe((resposne)=>{this.users=resposne;     console.log(resposne)
+  this.userService.getAllUsers().subscribe((resposne)=>{this.users=resposne;     this.usersCount=this.users.length;
   })
 }
 
@@ -80,29 +88,48 @@ getUserPunchesSorted(user:User):  Punch[]{
   return sortedPunches;
 }
 
-getFirstPunchTime(user:User): string{
+getFirstPunchTime(user:User): string[]{
   const lastPunch= this.getUserPunchesSorted(user)[this.getUserPunchesSorted(user).length-1]
   const sortedPunches= this.getUserPunchesSorted(user).filter((p)=>p.punchDate===lastPunch.punchDate);
+  
      let firstTimePunch=''
-   if(sortedPunches.length>0)
-     firstTimePunch=sortedPunches[0].punchTime;
+   if(sortedPunches.length>0){
+     firstTimePunch=sortedPunches[0]?.punchTime;
+    let firstPuchDate=sortedPunches[0]?.punchDate;
    firstTimePunch= firstTimePunch.substring(0,firstTimePunch.length-3);
-  return firstTimePunch;
+  return [firstPuchDate,this.formatPunchTime(firstTimePunch)];}
+  return ["No Punches",""] 
 }
 
-getlastPunchTime(user:User): string{
+
+formatPunchTime(time: string) {
+  let timeArr = time.split(":");
+  let hours = parseInt(timeArr[0]);
+  let Morning_Evening = 'AM';
+  if (parseInt(timeArr[0]) > 12) {
+    hours = parseInt(timeArr[0]) - 12;
+    Morning_Evening = "PM";
+  }
+  return hours + ":" + timeArr[1] + " " + Morning_Evening;
+}
+
+getlastPunchTime(user:User): string[]{
   const lastPunch= this.getUserPunchesSorted(user)[this.getUserPunchesSorted(user).length-1]
   const sortedPunchesByDATE= this.getUserPunchesSorted(user).filter((p)=>p.punchDate===lastPunch.punchDate);
   let lastTimePunch=''
-  if(sortedPunchesByDATE.length>1)
-    lastTimePunch=sortedPunchesByDATE[sortedPunchesByDATE.length-1].punchTime;
+  if(sortedPunchesByDATE.length>1){
+    lastTimePunch=sortedPunchesByDATE[sortedPunchesByDATE.length-1]?.punchTime;
+  let lastPunchDate=sortedPunchesByDATE[sortedPunchesByDATE.length-1]?.punchDate;
   lastTimePunch= lastTimePunch.substring(0,lastTimePunch.length-3);
- return lastTimePunch;
+ return [lastPunchDate,this.formatPunchTime(lastTimePunch)];}
+ return   ["No Punches",""] ;
+
 }
 
-goToAttendanceOfEmployee(employeeName: string){
-  this.punshservice.currentUsername=employeeName;
-  this.router.navigateByUrl("/punches")
+goToAttendanceOfEmployee(employeeName:string,employeeEmail: string){
+  this.punshservice.currentUsername.next(employeeName);
+  this.punshservice.UserEmailToAddPunchFromAdmin=employeeEmail;
+  this.router.navigateByUrl("/attendance")
 }
 
 deleteUser(userEmail: string) {
