@@ -21,6 +21,5 @@ public class PunchDto {
     private LocalDate punchDate;
     private LocalTime punchTime;
     private String type;
-//    private boolean isFirst;
-//    private boolean isLast;
+
 }

@@ -1,16 +1,13 @@
 package com.esense.portal.controller;
 
 import com.esense.portal.dto.ResponseDto;
-import com.esense.portal.dto.SignupRequest;
 import com.esense.portal.dto.UserDto;
-import com.esense.portal.enums.DepartmentConverter;
 import com.esense.portal.enums.DepartmentEnum;
-import com.esense.portal.enums.DepartmentEnumConv;
 import com.esense.portal.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.WebDataBinder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,13 +25,16 @@ public class UserController {
     private IUserService userService;
 
     @GetMapping("/users/count")
+
     public ResponseEntity<ResponseDto> getAllUsersCount(){
         long usersCount=  userService.getAllUsersCount();
         return new ResponseEntity<>(new ResponseDto(true,usersCount+""),HttpStatus.OK);
     }
 
     @GetMapping("/users/count/department")
-    public ResponseEntity<ResponseDto> getUsersCountByDepartment(@RequestParam String name){
+
+    public ResponseEntity<ResponseDto> getUsersCountByDepartment(@RequestParam DepartmentEnum name){
+        System.out.println("enum parameter: "+name);
         long usersCount=  userService.getUsersCountByDepartment(name);
         return new ResponseEntity<>(new ResponseDto(true,usersCount+""),HttpStatus.OK);
     }
@@ -52,7 +52,8 @@ public class UserController {
     }
 
     @GetMapping("/users/department")
-    public ResponseEntity<List<UserDto>> getUsersByDepartment(@RequestParam String name){
+    public ResponseEntity<List<UserDto>> getUsersByDepartment(@RequestParam DepartmentEnum name){
+        System.out.println("enum parameter: "+name);
         List<UserDto> userDtos=  userService.getUsersByDepartment(name);
         return new ResponseEntity<>(userDtos,HttpStatus.OK);
     }

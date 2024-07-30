@@ -1,4 +1,4 @@
-package com.esense.portal.dto;
+package com.esense.portal.dto.auth;
 
 import com.esense.portal.enums.DepartmentEnum;
 import lombok.*;
@@ -18,6 +18,10 @@ public class SignupRequest {
     private String position;
 
     private String password;
+
+    private String phoneNumber;
+
+    private String joiningDate;
 
 
 }

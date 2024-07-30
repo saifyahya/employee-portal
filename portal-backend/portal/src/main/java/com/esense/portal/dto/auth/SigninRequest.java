@@ -1,4 +1,4 @@
-package com.esense.portal.dto;
+package com.esense.portal.dto.auth;
 
 import com.esense.portal.enums.DepartmentEnum;
 import lombok.*;

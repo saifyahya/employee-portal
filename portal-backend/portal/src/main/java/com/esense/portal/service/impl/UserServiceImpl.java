@@ -23,7 +23,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public long getUsersCountByDepartment(String name) {
+    public long getUsersCountByDepartment(DepartmentEnum name) {
         return userRepository.countByDepartment(name);
     }
 
@@ -39,7 +39,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserDto> getUsersByDepartment(String name) {
+    public List<UserDto> getUsersByDepartment(DepartmentEnum name) {
         List<User> users = userRepository.findByDepartmentOrderByName(name);
         List<UserDto> userDtos = new ArrayList<>();
         users.forEach((user)->{
