@@ -6,6 +6,7 @@ import { User } from '../model/user';
 import jsPDF from 'jspdf';
 import { Punch } from '../model/punch';
 import { log } from 'console';
+import { off } from 'process';
 
 @Component({
   selector: 'app-calender',
@@ -440,9 +441,11 @@ showCharts: boolean=false;
             position: 'top',
           },
           tooltip: {
-            enabled: true,
+            enabled: false, // Disable tooltips
           }
-        }
+        },
+        hover:{
+intersect:false        }
       }
     });
   }

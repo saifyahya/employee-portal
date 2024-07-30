@@ -1,0 +1,107 @@
+<div class="signin-container">
+    <div class="signin-card">
+        <h2>Register New Employee</h2>
+        <form [formGroup]="signupForm" (ngSubmit)="submitSignup()">
+            <div class="data-container" formGroupName="userData">
+                <div class="column">
+                    <div class="name">
+                        <label for="emp_name">Employee Name</label>
+                        <input type="text" id="emp_name" formControlName="emp_name">
+                        <div class="validation-container" *ngIf="emp_name?.invalid && (emp_name?.dirty || emp_name?.touched)">
+                            <div class="email-valid" *ngIf="emp_name?.errors?.['minlength'] || emp_name?.errors?.['maxlength']">
+                                <p>*Employee Name must be 3-15 characters</p>
+                            </div>
+                            <div class="email-valid" *ngIf="emp_name?.errors?.['required']">
+                                <p>*Employee Name is required</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="department">
+                        <label for="lastName">Department</label>
+                        <select type="text" id="department" formControlName="department" class="datepicker-button">
+                            <option *ngFor="let dep of departments">{{ dep }}</option>
+                        </select>
+                    </div>
+                    <div class="date">
+                        <label>Joining Date</label>
+                        <button class="datepicker-button" (click)="toggoleDatePicker($event)">
+                            {{ signupForm.get('userData.joining_date')?.value.year + '-' + signupForm.get('userData.joining_date')?.value.month + '-' + signupForm.get('userData.joining_date')?.value.day }}
+                            <i class="fa-light fa-calendar"></i>                        </button>
+                        <div class="container" *ngIf="viewDatePicker">
+                            <ngb-datepicker formControlName="joining_date" [displayMonths]="1" outsideDays="hidden" (dateSelect)="this.viewDatePicker=!this.viewDatePicker">
+                            </ngb-datepicker>
+                        </div>
+                    </div>
+                    <div class="email">
+                        <label for="email">Email</label>
+                        <input type="text" id="email" formControlName="email">
+                        <div class="validation-container" *ngIf="email?.invalid && (email?.dirty || email?.touched)">
+                            <div class="email-valid" *ngIf="email?.errors?.['pattern']">
+                                <p>Invalid Email</p>
+                            </div>
+                            <div class="email-valid" *ngIf="email?.errors?.['required']">
+                                <p>*Email is required</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="phoneNumber">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="text" id="phoneNumber" formControlName="phoneNumber">
+                        <div class="validation-container" *ngIf="phoneNumber?.invalid && (phoneNumber?.dirty || phoneNumber?.touched)">
+                            <div class="email-valid" *ngIf="phoneNumber?.errors?.['pattern']">
+                                <p>Invalid Phone number</p>
+                            </div>
+                            <div class="email-valid" *ngIf="phoneNumber?.errors?.['required']">
+                                <p>*Phone number is required</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="position">
+                        <label for="position">Position</label>
+                        <input type="text" id="position" formControlName="position">
+                        <div class="validation-container" *ngIf="position?.invalid && (position?.dirty || position?.touched)">
+                            <div class="email-valid" *ngIf="position?.errors?.['required']">
+                                <p>*Position is required</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="password">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" formControlName="password">
+                        <div class="validation-container" *ngIf="password?.invalid && (password?.dirty || password?.touched)">
+                            <div class="password-valid" *ngIf="password?.errors?.['pattern']">
+                                <p >*Invalid Password:</p>
+                                <p >-One speical character: !#$%&?</p>
+                                <p >-8 characters length and contain a number</p>
+                                <p >-One uppercase letter</p>
+
+                            </div>
+                            <div class="email-valid" *ngIf="password?.errors?.['required']">
+                                <p>*Password is required</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="passwordConfirm">
+                        <label for="passwordConfirm">Confirm Password</label>
+                        <input type="password" id="passwordConfirm" formControlName="passwordConfirm">
+                        <div class="validation-container" *ngIf="passwordConfirm?.invalid && (passwordConfirm?.dirty || passwordConfirm?.touched)">
+                            <div class="email-valid" *ngIf="passwordConfirm?.errors?.['pattern']">
+                                <p>*Invalid Password</p>
+                            </div>
+                            <div class="email-valid" *ngIf="passwordConfirm?.errors?.['required']">
+                                <p>*Password is required</p>
+                            </div>
+                            <div class="email-valid" *ngIf="passwordConfirm?.errors?.['passwordMatchesError']">
+                                <p>*Passwords do not match</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" [disabled]="signupForm.invalid" class="submit-button">Signup</button>
+        </form>
+    </div>
+</div>

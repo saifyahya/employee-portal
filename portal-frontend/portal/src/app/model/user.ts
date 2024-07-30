@@ -6,6 +6,7 @@ export class User{
     joiningDate:Date;
     department:string;
     position:string;
+    phoneNumber:string;
     punches:Punch[];
 
 
@@ -15,7 +16,8 @@ export class User{
         joiningDate: Date,
         department: string,
         position: string,
-        punches: Punch[] = []
+        punches: Punch[] = [],
+        phoneNumber:string
       ) {
         this.name = name;
         this.email = email;
@@ -23,5 +25,6 @@ export class User{
         this.department = department;
         this.position = position;
         this.punches = punches;
+        this.phoneNumber=phoneNumber;
       }
 }

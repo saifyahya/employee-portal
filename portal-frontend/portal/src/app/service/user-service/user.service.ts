@@ -50,4 +50,5 @@ deleteByEmail(userEmail: string):Observable<string> {
     console.log("service api",res.message);
     return res.message; }))  }
 
+
 }
