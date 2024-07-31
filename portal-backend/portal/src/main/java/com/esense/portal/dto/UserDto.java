@@ -10,6 +10,7 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.OneToMany;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class UserDto {
 
     private String email;
 
-    private LocalDateTime joiningDate;
+    private LocalDate joiningDate;
 
     private String position;
 
