@@ -3,7 +3,6 @@ import { PunchService } from '../service/punch-service/punch.service';
 import { Punch } from '../model/punch';
 import { AuthenticationService } from '../service/authentication-service/authentication.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-attendance',
@@ -16,45 +15,65 @@ toggoleTimePicker(event: MouseEvent) {
 event.preventDefault();
 this.viewTimePicker=!this.viewTimePicker;
 }
-pickedPunchDate: string='';
+date = new Date();
+pickedPunchDate: {year:number , month: number, day:number}={year:this.date.getFullYear(),month:this.date.getMonth()+1,day:this.date.getDate()};
+pickedPunchTime: {hour:number, minute:number}={hour:this.date.getHours(), minute:this.date.getMinutes()};
+
 viewTimePicker: boolean=false;
-pickedPunchTime: string='';
 toggoleDatePicker(event: MouseEvent) {
 event.preventDefault;
 this.viewDatePicker=!this.viewDatePicker;
 }
 viewMyPunches() {
-this.punchService.currentUsername.next(this.authService.getCurrentUserName())
+this.punchService.currentUsername.next(this.authService.getCurrentUserName());
+this.punchService.UserEmailToAddPunchFromAdmin='';
 }
   @ViewChild('punchModal', { static: true }) punchModal!: TemplateRef<any>;
+
   constructor(private punchService: PunchService,private authService:AuthenticationService,private modalService: NgbModal) {
   }
   openPunchModal() {
     this.modalService.open(this.punchModal);
   }
+
 punchType: string="office";
 myDateValue: Date = new Date();
 myTime: Date = new Date();
 isMeridian: boolean = true;
 punchNow() {
+  console.log(this.punchType);
+  
+
+}
+addPunch() {
+  const type= this.punchType;
+  const formattedMonth =this.pickedPunchDate.month.toString().length===1?'0'+this.pickedPunchDate.month.toString():this.pickedPunchDate.month.toString();
+  const formattedDay =this.pickedPunchDate.day.toString().length===1?'0'+this.pickedPunchDate.day.toString():this.pickedPunchDate.day.toString();
+  const punchDate=this.pickedPunchDate.year+'-'+formattedMonth+'-'+formattedDay;
+  
+  const formattedHour =this.pickedPunchTime.hour.toString().length===1?'0'+this.pickedPunchTime.hour.toString():this.pickedPunchTime.hour.toString();
+  const formattedMinutes =this.pickedPunchTime.minute.toString().length===1?'0'+this.pickedPunchTime.minute.toString():this.pickedPunchTime.minute.toString();
+  const punchTime=formattedHour+':'+formattedMinutes;
+  const userEmail = this.getUserEmailToAddPunchByAdmin();
+  console.log(punchDate," ",punchTime," ", userEmail, " ",punchTime, " ", type);
+  if(this.punchService.UserEmailToAddPunchFromAdmin){
+    this.punchService.addNewPunch(punchDate,punchTime,type,userEmail).subscribe({
+      next:(data)=>{console.log(data);
+      },
+      error:(error)=>{console.log(error);
+      }
+    });
+  }
+  else{
 this.punchService.punchNow(this.punchType).subscribe({
   next:(data)=>{console.log(data);
   },
   error:(error)=>{console.log(error);
   }
 });
-}
-addPunch() {
-  const type= this.punchType;
-  const punchDate=this.pickedPunchDate;
-  const punchTime=this.pickedPunchTime;
-  const userEmail = this.getUserEmailToAddPunchByAdmin();
-this.punchService.addNewPunch(punchDate,punchTime,type,userEmail).subscribe({
-  next:(data)=>{console.log(data);
-  },
-  error:(error)=>{console.log(error);
   }
-});
+
+
 }
 
 viewDatePicker= false;
@@ -62,7 +81,9 @@ viewDatePicker= false;
 
 
 getUserEmailToAddPunchByAdmin():string{
-  return this.punchService.UserEmailToAddPunchFromAdmin;
+  if (this.punchService.UserEmailToAddPunchFromAdmin)
+    return this.punchService.UserEmailToAddPunchFromAdmin;
+  return this.currentUsername;
 }
 
 ngAfterViewInit(): void {
@@ -108,11 +129,11 @@ ngAfterViewInit(): void {
   async getUserPunches() {
     const startDate = this.weeks[0].toISOString().split("T")[0];
     const endDate = this.weeks[this.weeks.length - 1].toISOString().split("T")[0];
-    let currentUsername='';
-this.punchService.currentUsername.subscribe((data)=>currentUsername=data);
+  //  let currentUsername='';
+//this.punchService.currentUsername.subscribe((data)=>currentUsername=data);
     try {
       const data = await this.punchService.getUserPunchesByDatePeriodOrderedAsc(
-        currentUsername,
+        this.currentUsername,
         startDate,
         endDate
       ).toPromise();
@@ -271,11 +292,12 @@ this.punchService.currentUsername.subscribe((data)=>currentUsername=data);
     return [diffHours, diffMinutes]
   }
 
-  ngOnInit() {
+  ngOnInit(){
     this.getTheFirstDayOfTheWeek();
     this.fillWeeks();
-    this.getUserPunches()
-
+    this.punchService.currentUsername.subscribe((data)=>{this.currentUsername=data;
+      this.getUserPunches()
+    });
   }
 
   getTheFirstDayOfTheWeek(): void {

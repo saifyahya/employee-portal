@@ -441,11 +441,11 @@ showCharts: boolean=false;
             position: 'top',
           },
           tooltip: {
-            enabled: false, // Disable tooltips
+            enabled: true, // Disable tooltips
           }
         },
         hover:{
-intersect:false        }
+intersect:true        }
       }
     });
   }
@@ -475,7 +475,7 @@ intersect:false        }
     this.barChart = new Chart("barChart", {
       type: 'bar',
       data: {
-        labels: this.weeks.map((day) => day.toDateString()), // Assuming this.weeks is an array of date strings or week labels
+        labels: this.weeks.map((day) => day.toDateString()), 
         datasets: datasets
       },
       options: {
@@ -510,19 +510,19 @@ intersect:false        }
 
   exportChartToPDF(): void {
     // Check if the chart exists
-    if (!this.barChart) {
+    if (!this.chart) {
       console.error("No chart available to export.");
       return;
     }
 
     // Get base64 image of the chart
-    const chartImage = this.barChart.toBase64Image();
+    const chartImage = this.chart.toBase64Image();
 
     // Create a new jsPDF instance
     const pdf = new jsPDF();
 
     // Add the chart image to the PDF
-    pdf.addImage(chartImage, 'PNG', 10, 10, 190, 100); // Adjust positioning and size as needed
+    pdf.addImage(chartImage, 'PNG', 10, 10, 75, 75); // Reduced size
 
     // Save the PDF
     pdf.save('chart.pdf');

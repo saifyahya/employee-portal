@@ -38,25 +38,31 @@ toggoleDatePicker(e:Event){
     d.setDate(joiningDate.day);
    let request = new AddEmployeeRequest(
     this.signupForm.get('userData.emp_name')?.value,
-    this.signupForm.get('userData.department')?.value,
+    this.mapDepartmentToEnums(this.signupForm.get('userData.department')?.value),
     this.signupForm.get('userData.email')?.value,
     this.signupForm.get('userData.position')?.value,
     this.signupForm.get('userData.password')?.value,
     this.signupForm.get('userData.phoneNumber')?.value,
     d.toISOString().split('T')[0]);
 
-    // this.authService.signup(request).subscribe({
-    //   next: (res) => {
-    //     console.log(res);
-    //     this.router.navigateByUrl('/signin')
-    //   },
-    //   error: (err) => {
-    //     console.log(err);
-    //   }
-    // })
+    this.authService.signup(request).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.router.navigateByUrl('/signin')
+      },
+      error: (err) => {
+        console.log(err);
+      }
+    })
   }
 
-
+  mapDepartmentToEnums( departmentEnum:string):string{
+    if(departmentEnum==="Mobile Development")
+      return "MOBILE_DEVELOPMENT"
+    if(departmentEnum==="Software Development")
+      return "SOFTWARE_DEVELOPMENT"
+    return departmentEnum
+  }
 
 PasswordsMatches(g:FormGroup)  {
   const passwordConfirm= g.get('passwordConfirm')?.value;

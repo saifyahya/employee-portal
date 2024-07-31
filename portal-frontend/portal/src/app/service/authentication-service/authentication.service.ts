@@ -64,9 +64,9 @@ export class AuthenticationService {
   }
   
 
-  // signup(request:AddEmployeeRequest) {
-  //   return this.httpClient.post<any>(`${this.baseUrl}addUser`, { email, password, username }).pipe(map((res) => { return res; }));
-  // }
+  signup(request:AddEmployeeRequest) {
+    return this.httpClient.post<any>(`${this.baseUrl}addUser`, request).pipe(map((res) => { return res; }));
+  }
 
   getToken() {
     if (isPlatformBrowser(this.platformId)){
