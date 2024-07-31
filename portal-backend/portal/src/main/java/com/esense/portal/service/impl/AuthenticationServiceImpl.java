@@ -39,7 +39,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
     user.setPhoneNumber(signupRequest.getPhoneNumber());
     user.setActive(true);
-    user.setJoiningDate(LocalDateTime.parse(signupRequest.getJoiningDate()));
+    user.setJoiningDate(LocalDate.parse(signupRequest.getJoiningDate()));
     Role role =new Role();
     role.setRole(RoleEnum.EMPLOYEE);
     user.addToRoles(role);
