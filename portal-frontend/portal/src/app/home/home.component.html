@@ -36,7 +36,7 @@
               <td>{{user.email}}</td>
               <td>{{formatDepartmentEnums(user.department)}}</td>
               <td>{{user.position}}</td>
-              <td>{{user.joiningDate.toString().split("T")[0]}}</td>
+              <td>{{user.joiningDate.toString()}}</td>
               <td>{{getFirstPunchTime(user)[0] || ""}} <br> {{getFirstPunchTime(user)[1]}} </td>
               <td>{{getlastPunchTime(user)[0] || ""}} <br> {{getlastPunchTime(user)[1]}} </td>
               <td (click)="deleteUser(user.email)" class="employee-delete">delete user Account</td>
