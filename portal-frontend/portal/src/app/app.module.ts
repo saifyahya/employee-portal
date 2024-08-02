@@ -15,6 +15,7 @@ import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpRequestInterceptorService } from './request-interceptor/http-request-interceptor.service';
 import { CookieService } from 'ngx-cookie-service';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CookieService } from 'ngx-cookie-service';
     CalenderComponent,
     AttendanceComponent,
     NewEmployeeComponent,
-    LoginComponent
+    LoginComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,

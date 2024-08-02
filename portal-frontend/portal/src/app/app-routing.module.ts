@@ -12,8 +12,10 @@ const routes: Routes = [
   {path:'attendance',component:AttendanceComponent,canActivate:[ActivateRoutesService]},
   { path: 'signin', component: LoginComponent ,canActivate:[LoginActivateService]},
   { path: 'addEmpolyee', component: NewEmployeeComponent ,canActivate:[ActivateRoutesService]},
+  {path:'',component:LoginComponent,canActivate:[LoginActivateService]},
   {path:'**',component:LoginComponent,canActivate:[LoginActivateService]}
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

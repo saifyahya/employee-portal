@@ -1,20 +1,25 @@
-body {
+
+.body {
+    min-height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(to right, #6a11cb, #2575fc);
-    margin: 0;
-    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to bottom, #013a63, #01497c, #014f86 50%, #2a6f97 75%,#468faf,#61a5c2,#89c2d9,#a9d6e5); /* Gradient from top to bottom */
+    font-family: "Montserrat", sans-serif;
 }
 
 .signin-container {
+    margin-top: 95px;
+
     display: flex;
+     flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
     max-width: 400px;
-    padding: 20px;
+    height: fit-content;
     background: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -34,12 +39,12 @@ form {
     flex-direction: column;
 }
 
-.fullname,
 .email,
-.phoneNumber,
-.country,
 .password {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+    margin: 10px 20px 10px 20px;
 }
 
 label {
@@ -50,7 +55,6 @@ label {
 
 input {
     width: 100%;
-    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
@@ -70,7 +74,7 @@ input:focus {
     border-top-left-radius: 20%;
     border-bottom-right-radius: 20%;
     margin-bottom: 5px;
-
+    margin-left: 20px;
 }
 
 .validation-container div , .badCredentials {
@@ -78,4 +82,45 @@ input:focus {
     margin-bottom: 3px;
     color: red;
     padding: 3px;
+}
+
+.header{
+    background-color: rgb(5, 134, 209);
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 30px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+
+
+}
+.input-container {
+    position: relative;
+    width: 100%;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 10px 30px 10px 10px; /* Adjust padding as needed */
+    box-sizing: border-box;
+}
+
+.input-container i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* Ensure the icon doesn't block input focus */
+    color: #24527a;
+}
+button{
+    background-color:#24527a ;
+    color:white;
+    padding-right: 20px;
+    margin: 20px 20px 0 20px;
+    height: 40px;
+    font-size: large;
+    margin-bottom: 40px;
 }

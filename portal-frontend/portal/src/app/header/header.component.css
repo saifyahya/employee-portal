@@ -1,3 +1,7 @@
+*{
+  font-family: "Montserrat", sans-serif;
+}
+
 .custom-navbar {
     display: flex;
     justify-content: space-between;
@@ -12,16 +16,17 @@
     align-items: center;
   }
   
-
-  
   .custom-collapse {
     display: flex;
     flex-grow: 1;
     justify-content: flex-end; /* Align items to the right */
   }
+  a{
+    text-decoration: none;
+}
 
   .custom-collapse  {
-cursor: pointer;
+    cursor: pointer;
   }
 
   .custom-collapse span {
@@ -45,5 +50,9 @@ cursor: pointer;
     font-weight: bold; /* Highlight active item */
   }
   
- 
+ .app-title{
+  font-family: "Concert One", sans-serif;;
+  font-size: 25px;
+  font-style:italic ;
+}
   

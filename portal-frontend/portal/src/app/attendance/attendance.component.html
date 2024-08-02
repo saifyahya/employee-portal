@@ -1,15 +1,15 @@
 <div class="attendance-container">
+
+    <h5>Weekly Punches For: <span style="color:#24527a; font-style: italic;">{{getUserEmailToAddPunchByAdmin()}}</span>
+    </h5>
+
     <button (click)="prevWeek()">Previous</button>
     <button (click)="nextWeek()">Next</button>
     <span>{{weeks[0].toDateString()}} - {{weeks[weeks.length-1].toDateString()}}</span>
 
-
     <button type="button" class="btn btn-primary" (click)="viewMyPunches()" *ngIf="isManager()">My Punches</button>
-    <!-- <button type="button" class="btn btn-primary" (click)="openPunchModal()">
-        Punch now
-    </button> -->
-    <button type="button" class="btn btn-primary" (click)="openPunchModal()" >Add Punch</button>
-    <p class="usermame">{{getUserEmailToAddPunchByAdmin()}}</p>
+
+    <button type="button" class="btn btn-primary" (click)="openPunchModal()">Add Punch</button>
 
     <ng-template #punchModal let-modal>
         <div class="modal-header">
@@ -24,50 +24,59 @@
                 <option [ngValue]="'home'">Home</option>
             </select>
 
-            <button class="datepicker-button" (click)="toggoleDatePicker($event)" *ngIf="isManager()" >Pick Date {{pickedPunchDate.year +'-'+pickedPunchDate.month+'-'+pickedPunchDate.day}}</button>
-                <div class="container" *ngIf="viewDatePicker">
-                    <ngb-datepicker [(ngModel)]="pickedPunchDate" [displayMonths]="1" outsideDays="hidden"
-                        (dateSelect)="this.viewDatePicker=!this.viewDatePicker">
-                    </ngb-datepicker>
-                </div>
-            <button class="datepicker-button" (click)="toggoleTimePicker($event)" *ngIf="isManager()">Pick Time  {{pickedPunchTime.hour+':'+pickedPunchTime.minute}}</button>
-                    <div class="container" *ngIf="viewTimePicker">
-                        <ngb-timepicker [(ngModel)]="pickedPunchTime" outsideDays="hidden"
-                            (dateSelect)="this.viewTimePicker=!this.viewTimePicker">
-                        </ngb-timepicker>
-                    </div>
+            <button class="datepicker-button" (click)="toggoleDatePicker($event)" *ngIf="isManager()">Pick Date
+                {{pickedPunchDate.year +'-'+pickedPunchDate.month+'-'+pickedPunchDate.day}}</button>
+            <div class="container" *ngIf="viewDatePicker">
+                <ngb-datepicker [(ngModel)]="pickedPunchDate" [displayMonths]="1" outsideDays="hidden"
+                    (dateSelect)="this.viewDatePicker=!this.viewDatePicker">
+                </ngb-datepicker>
+            </div>
+            <button class="datepicker-button" (click)="toggoleTimePicker($event)" *ngIf="isManager()">Pick Time
+                {{pickedPunchTime.hour+':'+pickedPunchTime.minute}}</button>
+            <div class="container" *ngIf="viewTimePicker">
+                <ngb-timepicker [(ngModel)]="pickedPunchTime" outsideDays="hidden"
+                    (dateSelect)="this.viewTimePicker=!this.viewTimePicker">
+                </ngb-timepicker>
+            </div>
+            <div class="alert alert-success" *ngIf="punchAddedSuccessfully"> Punch Added Successfully </div>
+            <div *ngIf="punchNotAdded" class="alert alert-danger"> Punch has not been added. Refresh the page or try after few minutes</div>
+            <div *ngIf="lastPunchTimeMessage" class="alert alert-danger"> {{lastPunchTimeMessage}}</div>
+
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" (click)="modal.close()">Close</button>
+            <button type="button" class="btn btn-secondary" (click)="modal.close(); punchAddedSuccessfully=false;punchNotAdded=false;lastPunchTimeMessage=''">Close</button>
             <button type="button" class="btn btn-primary" (click)="addPunch()">Punch</button>
         </div>
     </ng-template>
 
-<div class="days" *ngFor="let day of weeks">
-
-    {{ day.toDateString() }}
-    <span *ngFor="let punch of punches" class="punches">
-        <span *ngIf="isPunchInThisDay(punch, day)">
-            {{ formatPunchTime(punch.punchTime) }}
-        </span>
-        <img src="../../assets/images/home-vector-icon.png" *ngIf="isPunchInThisDay(punch, day) && punch.type==='home'">
-    </span>
-    <div class="day-summary">
-        <div>
-            <strong>Working Hours: </strong>
-            <span>{{ workingHours.get(day.toISOString().split('T')[0])?.[0] }}h {{
-                workingHours.get(day.toISOString().split('T')[0])?.[1] }}m</span>
-            <p class="reminders" *ngIf="workReminder.has(day.toISOString().split('T')[0])">{{
-                workReminder.get(day.toISOString().split('T')[0]) }}</p>
+    <div class="days" *ngFor="let day of weeks">
+        <div class="">
+            {{ day.toDateString() }}
+            <ng-container *ngFor="let punch of punches" class="punches">
+                <span *ngIf="isPunchInThisDay(punch, day)" class="punches">
+                    {{ formatPunchTime(punch.punchTime) }}
+                </span>
+                <img src="../../assets/images/home-vector-icon.png"
+                    *ngIf="isPunchInThisDay(punch, day) && punch.type==='home'">
+            </ng-container>
         </div>
-        <div>
-            <strong>Breaking Hours: </strong>
-            <span>{{ BreakingHours.get(day.toISOString().split('T')[0])?.[0] }}h {{
-                BreakingHours.get(day.toISOString().split('T')[0])?.[1] }}m</span>
-            <p class="reminders" *ngIf="breakReminder.has(day.toISOString().split('T')[0])">{{
+
+        <div class="day-summary">
+            <div>
+                <strong>Working Hours: </strong>
+                <span>{{ workingHours.get(day.toISOString().split('T')[0])?.[0] }}h {{
+                    workingHours.get(day.toISOString().split('T')[0])?.[1] }}m</span>
+            </div>
+            <div>
+                <strong>Breaking Hours: </strong>
+                <span>{{ BreakingHours.get(day.toISOString().split('T')[0])?.[0] }}h {{
+                    BreakingHours.get(day.toISOString().split('T')[0])?.[1] }}m</span>
+            </div>
+            <p class="reminders" *ngIf="workReminder.has(day.toISOString().split('T')[0]) ">{{
+                workReminder.get(day.toISOString().split('T')[0]) }}</p>
+            <p class="reminders" *ngIf="breakReminder.has(day.toISOString().split('T')[0]) ">{{
                 breakReminder.get(day.toISOString().split('T')[0]) }}</p>
         </div>
     </div>
-</div>
-
+    <button (click)="downloadReport()">Get Punches Report</button>
 </div>

@@ -1,13 +1,13 @@
 <div class="home-container">
-    <div class="total-employees">
-      <span>Total Employees: {{usersCount}}</span>
-      
-    </div>
+   
   
     <div class="employees-data">
       <div class="employees-search">
-        <!-- Search form or input can go here -->
-        <input type="text" placeholder="Search Employees" [(ngModel)]="searchedEmployee" (input)="searchEmployeeByName()">
+        <div class="total-employees">
+          <span class="total-emp">{{usersCount}} <span class="usersCount">total employees </span></span>
+        </div>
+
+        <input type="text" placeholder="Search Employee" [(ngModel)]="searchedEmployee" (input)="searchEmployeeByName()">
 
         <select [(ngModel)]="selected_department" (change)="changeCollectedUsers()">
           <option *ngFor="let depart of departments" [ngValue]="depart">{{depart}}</option>
@@ -46,5 +46,12 @@
       </div>
     </div>
   </div>
+  <hr>
+  <button class="view-charts" (click)="toggleViewCharts($event)">View Employees Working Hours Charts</button>
+
+<ng-container *ngIf="viewCharts">
   <app-calender></app-calender>
+</ng-container>
+
+
   

@@ -1,0 +1,17 @@
+.footer-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    background-color: #f8f9fa;
+    padding: 30px;
+    font-family: "Montserrat", sans-serif;
+font-weight: bold;
+font-size: medium;
+position: relative;
+bottom: 0;
+width: 100%;
+}
+
+span{
+    margin-left: 50px;
+}

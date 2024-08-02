@@ -9,16 +9,21 @@ export class LoginActivateService implements CanActivate{
   isLoggedin = this.auth.getToken();
 
   constructor(private router:Router,private auth:AuthenticationService) { }
+
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
     console.log(this.isLoggedin);
     
     if (this.auth.getToken()) {
-      if(this.auth.isManager())
+      if(this.auth.isManager()){
       this.router.navigateByUrl("/dashboard");
-    else
+      }
+    else{
     this.router.navigateByUrl("/attendance")
-      return false;
+      return false;}
     }
     return true;
   }
+
+
+
 }
