@@ -18,10 +18,6 @@ import java.util.List;
 @CrossOrigin({"http://127.0.0.1:4200", "http://localhost:4200"})
 public class UserController {
 
-//    @InitBinder
-//    public void initBinder(WebDataBinder dataBinder) {
-//        dataBinder.registerCustomEditor(DepartmentEnum.class, new DepartmentEnumConv() );
-//    }
     private IUserService userService;
 
     @GetMapping("/users/count")
@@ -34,7 +30,6 @@ public class UserController {
     @GetMapping("/users/count/department")
 
     public ResponseEntity<ResponseDto> getUsersCountByDepartment(@RequestParam DepartmentEnum name){
-        System.out.println("enum parameter: "+name);
         long usersCount=  userService.getUsersCountByDepartment(name);
         return new ResponseEntity<>(new ResponseDto(true,usersCount+""),HttpStatus.OK);
     }
@@ -54,7 +49,6 @@ public class UserController {
 
     @GetMapping("/users/department")
     public ResponseEntity<List<UserDto>> getUsersByDepartment(@RequestParam DepartmentEnum name){
-        System.out.println("enum parameter: "+name);
         List<UserDto> userDtos=  userService.getUsersByDepartment(name);
         return new ResponseEntity<>(userDtos,HttpStatus.OK);
     }

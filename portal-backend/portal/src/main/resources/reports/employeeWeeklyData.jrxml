@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.21.3.final using JasperReports Library version 6.21.3-4a3078d20785ebe464f18037d738d12fc98c13cf  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="employee_portal" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2612472e-ff41-4f50-b85a-5a792a84025b">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="employee_portal" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2612472e-ff41-4f50-b85a-5a792a84025b">
     <property name="com.jaspersoft.studio.data.sql.tables" value=""/>
     <property name="com.jaspersoft.studio.data.defaultdataadapter" value="portal_db adapter"/>
     <style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
@@ -115,26 +115,18 @@
                 <textFieldExpression><![CDATA["Employee: "+$P{username}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="210" y="60" width="100" height="30" uuid="786f5ea7-9b44-4d0b-a7ed-e4db12f045b2"/>
-                <textElement textAlignment="Center"/>
-                <textFieldExpression><![CDATA[$P{end_date}]]></textFieldExpression>
-            </textField>
-            <staticText>
-                <reportElement x="10" y="60" width="100" height="30" uuid="ec7bfcfe-6b03-4a55-a250-af74e5cca244"/>
-                <textElement textAlignment="Center"/>
-                <text><![CDATA[Weeks]]></text>
-            </staticText>
-            <textField>
-                <reportElement x="110" y="60" width="100" height="30" uuid="efe082c7-cd05-44a8-ad1f-0e906c1491a5"/>
-                <textElement textAlignment="Center"/>
-                <textFieldExpression><![CDATA[$P{start_date}]]></textFieldExpression>
+                <reportElement x="10" y="60" width="310" height="19" uuid="efe082c7-cd05-44a8-ad1f-0e906c1491a5"/>
+                <textElement textAlignment="Left">
+                    <font fontName="Arial" size="13"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Weeks: "+$P{start_date}+" to "+$P{end_date}]]></textFieldExpression>
             </textField>
         </band>
     </pageHeader>
     <columnHeader>
         <band height="20" splitType="Prevent">
             <staticText>
-                <reportElement mode="Opaque" x="20" y="0" width="160" height="20" backcolor="#65AAF0" uuid="c3fc8fc0-f134-4f48-8657-ca4d5d1bbe30"/>
+                <reportElement mode="Opaque" x="130" y="0" width="160" height="20" backcolor="#65AAF0" uuid="c3fc8fc0-f134-4f48-8657-ca4d5d1bbe30"/>
                 <box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
                     <pen lineWidth="0.5"/>
                 </box>
@@ -142,7 +134,7 @@
                 <text><![CDATA[Date]]></text>
             </staticText>
             <staticText>
-                <reportElement mode="Opaque" x="180" y="0" width="130" height="20" backcolor="#65AAF0" uuid="104cd1ac-a3b3-49eb-8a2d-d9c5f7470558"/>
+                <reportElement mode="Opaque" x="290" y="0" width="130" height="20" backcolor="#65AAF0" uuid="104cd1ac-a3b3-49eb-8a2d-d9c5f7470558"/>
                 <box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
                     <pen lineWidth="0.5"/>
                 </box>
@@ -154,7 +146,7 @@
     <detail>
         <band height="20" splitType="Stretch">
             <textField>
-                <reportElement x="20" y="0" width="160" height="20" uuid="c52dca6e-5737-4622-b46f-856f143463dc"/>
+                <reportElement x="130" y="0" width="160" height="20" uuid="c52dca6e-5737-4622-b46f-856f143463dc"/>
                 <box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
                     <pen lineWidth="0.5" lineStyle="Solid"/>
                 </box>
@@ -164,7 +156,7 @@
                 <textFieldExpression><![CDATA[new SimpleDateFormat("EEEE, MMMM dd, yyyy").format($F{punch_date})]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="180" y="0" width="130" height="20" uuid="30da0efc-8a8d-4d1a-9a0c-fceefa1cd219"/>
+                <reportElement x="290" y="0" width="130" height="20" uuid="30da0efc-8a8d-4d1a-9a0c-fceefa1cd219"/>
                 <box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
                     <pen lineWidth="0.5"/>
                 </box>
@@ -176,10 +168,24 @@
         </band>
     </detail>
     <pageFooter>
-        <band height="233" splitType="Stretch">
+        <band height="63" splitType="Stretch">
+            <textField>
+                <reportElement x="170" y="33" width="100" height="30" uuid="74b32f40-ee18-42c1-8db7-ef888afcc94a"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+            <textField evaluationTime="Report">
+                <reportElement x="270" y="33" width="100" height="30" uuid="f8193747-b9a5-4504-8cfb-86cfc707a938"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+    <summary>
+        <band height="220" splitType="Stretch">
             <pieChart>
                 <chart evaluationTime="Report">
-                    <reportElement x="190" y="10" width="200" height="200" uuid="dc0fc92e-9236-4d62-9706-50557b0a3249"/>
+                    <reportElement x="170" y="10" width="200" height="200" uuid="dc0fc92e-9236-4d62-9706-50557b0a3249"/>
                     <chartTitle/>
                     <chartSubtitle/>
                     <chartLegend/>
@@ -195,8 +201,5 @@
                 </piePlot>
             </pieChart>
         </band>
-    </pageFooter>
-    <summary>
-        <band height="42" splitType="Stretch"/>
     </summary>
 </jasperReport>
