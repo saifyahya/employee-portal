@@ -32,6 +32,22 @@ public class PunchServiceImpl implements IPunchService {
     }
 
     @Override
+    public PunchDto getUserLastPunchByDateAndUserEmail(String userEmail, LocalDate punchDate) {
+        Punch punch = punchRepository.findFirst1ByUserEmailAndPunchDateOrderByPunchDateAscPunchTimeDesc(userEmail,punchDate)
+                .orElseThrow(()->new ResourceNotFoundException("Punch","User emailAnd Date",userEmail+' '+punchDate));
+        PunchDto  punchDto=PunchMapper.toPunchDto(new PunchDto(),punch);
+        return punchDto;
+    }
+
+    @Override
+    public PunchDto getUserLastPunchByDateAndUsername(String username, LocalDate punchDate) {
+        Punch punch = punchRepository.findFirst1ByUserNameAndPunchDateOrderByPunchDateAscPunchTimeDesc(username,punchDate)
+                .orElseThrow(()->new ResourceNotFoundException("Punch","Username And Date",username+' '+punchDate));
+        PunchDto  punchDto=PunchMapper.toPunchDto(new PunchDto(),punch);
+        return punchDto;
+    }
+
+    @Override
     public long getUserPunchesCount(String username) {
         return punchRepository.countByUser_Name(username);
     }

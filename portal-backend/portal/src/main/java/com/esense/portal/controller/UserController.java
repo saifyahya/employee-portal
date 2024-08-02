@@ -51,6 +51,7 @@ public class UserController {
         return new ResponseEntity<>(userDtos,HttpStatus.OK);
     }
 
+
     @GetMapping("/users/department")
     public ResponseEntity<List<UserDto>> getUsersByDepartment(@RequestParam DepartmentEnum name){
         System.out.println("enum parameter: "+name);
