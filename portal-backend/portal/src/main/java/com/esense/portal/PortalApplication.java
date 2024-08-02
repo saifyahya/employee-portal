@@ -34,7 +34,7 @@ public class PortalApplication implements CommandLineRunner {
 //		user.setEmail("admin@esense.com");
 //		user.setJoiningDate(LocalDateTime.now());
 //		user.setPosition("HR");
-//		user.setName("Admin");
+//		user.setName("ARayyan");
 //		user.setDepartment(DepartmentEnum.HR);
 //		Role employeeRole = new Role();
 //		employeeRole.setRole(RoleEnum.EMPLOYEE);
