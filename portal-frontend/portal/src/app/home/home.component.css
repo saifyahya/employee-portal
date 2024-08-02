@@ -31,10 +31,32 @@
     justify-content: flex-end;
     margin-bottom: 1rem;
   }
+
+  .employees-search .total-emp{
+   background-color: #ddd;
+   padding: 8px;
+   font-family: "Montserrat", sans-serif;
+   border-style: solid;
+   border-color: #000000;
+   font-size: medium;
+
+  }
+
+  .view-charts{
+    background-color: #ddd;
+    padding: 8px;
+    font-family: "Montserrat", sans-serif;
+    border-style: solid;
+    border-color: #000000;
+    font-size: medium;
+    margin-left: 10px;
+    margin-bottom: 5px;
+  }
   
   .employees-search input {
     padding: 0.5rem;
     font-size: 1rem;
+    margin-right: 10px;
   }
   
   .employees-table {

@@ -1,16 +1,30 @@
-<span>{{weeks[0].toDateString()+ " - "+weeks[weeks.length-1].toDateString()}}</span>
-<button (click)="prevWeek()">Previous</button><button (click)="nextWeek()">Next</button>
-<button (click)="exportChartToPDF()">Export to PDF</button>
 
-<button (click)="showData()">data</button>
-
-<!-- <ng-template *ngIf="showCharts"> -->
-    <div class="chart-container" style="width: 300px; height: 300px;" >
-        <canvas  id="donutChart"  >{{ chart }}</canvas>
+<div class="calender-container">
+    <div class="header-container">
+        <div class="div"> <span class="title">Employees Working Hours </span>
+        </div>
+        <div class="div"><span class="date-range">{{weeks[0].toDateString()}} -
+                {{weeks[weeks.length-1].toDateString()}}</span>
+            <button class="previous" (click)="prevWeek()">Previous</button>
+            <button class="next" (click)="nextWeek()">Next</button>
+            <button class="export" (click)="exportChartToPDF()">Export to PDF</button>
+        </div>
+    
     </div>
     
-    <div class="chart-container" >
-        <canvas  id="barChart"  >{{ barChart }}</canvas>
+    
+    <div class="charts-container">
+        <div class="chart-container">
+            <h5>Weekly Working Hours</h5>
+            <canvas id="donutChart"></canvas>
+        </div>
+    
+        <div class="chart-container-bar">
+            <h5>Daily Working Hours</h5>
+            <canvas id="barChart"></canvas>
+        </div>
     </div>
 
-<!-- </ng-template> -->
+      
+</div>
+

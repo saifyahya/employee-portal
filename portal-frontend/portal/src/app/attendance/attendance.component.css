@@ -7,6 +7,10 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif;
+  margin-top:50px;
+  font-family: "Montserrat", sans-serif;
+  margin-bottom: 35px;
+
 }
 
 .attendance-container button {
@@ -27,7 +31,8 @@
 
 .days {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: start;
   justify-content: space-between;
   padding: 10px;
   margin: 5px 0;
@@ -41,6 +46,7 @@
 .days span {
   font-size: 14px;
   color: #333;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .punches {
@@ -108,7 +114,92 @@ img {
       margin: 2px 0;
   }
 
- .usermame{
-    margin-left: 350px;
+ .username-color{
+    font-size: 200px;
+    color: rgb(0, 140, 255)
   }
+}
+
+.day-summary{
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-body p {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+select {
+  margin-bottom: 20px;
+  padding: 5px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.datepicker-button,
+.timepicker-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px 0;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.datepicker-button:hover,
+.timepicker-button:hover {
+  background-color: #0056b3;
+}
+
+.container {
+  margin-top: 20px;
+}
+
+.ngb-datepicker, 
+.ngb-timepicker {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+  border-color: #545b62;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
 }

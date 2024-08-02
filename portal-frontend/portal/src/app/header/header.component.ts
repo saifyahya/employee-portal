@@ -8,23 +8,11 @@ import { CookieService } from 'ngx-cookie-service';
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent implements OnInit {
-goToHome() {
-if(this.auth.getToken() && this.auth.isManager())
-  this.router.navigateByUrl('/dashboard')
-else  if(this.auth.getToken())
-this.router.navigateByUrl('/attendance')
-else
-this.router.navigateByUrl('/signin')
-
-}
-
+export class HeaderComponent {
+  
   constructor(private auth: AuthenticationService, private router: Router, private cookie: CookieService) {
   }
 
-  ngOnInit(): void {
-
-  }
 
   isManager(): boolean {
     return this.auth.isManager();

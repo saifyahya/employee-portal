@@ -1,45 +1,38 @@
-<div class="signin-container">
+<div class="body">
+    <div class="signin-container">
 
-    <div class="signin-card">
+        <div class="header">
 
-        <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+            <h5>User Login</h5>
+        </div>
 
-            <div class="data-container" formGroupName="userData">
+        <div class="signin-card">
 
-                <div class="email">
-                    <label for="email">Email</label>
-                    <input type="text" id="email" formControlName="email">
+            <form [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+
+                <div class="data-container" formGroupName="userData">
+
+                    <div class="email">
+                        <div class="input-container"> <input type="text" id="email" formControlName="email"
+                                placeholder="Email"> <i class="fa-regular fa-envelope"></i>
+                        </div>
+                    </div>
+
+
+                    <div class="password">
+
+                        <div class="input-container">
+                            <input type="password" id="password" formControlName="password" placeholder="Password"><i
+                                class="fa-solid fa-lock"></i>
+                        </div>
+                    </div>
+
+                    <div class="badCredentials" *ngIf="badCredentialsMessage">
+                        <p>*Incorrect email or password</p>
+                    </div>
                 </div>
-
-                <!-- <div class="validation-container" *ngIf="email?.invalid && (email?.dirty ||email?.touched)">
-                    <div class="email-valid" *ngIf="email?.errors?.['pattern']">
-                        <p>Invalid Email</p>
-                    </div>
-                    <div class="email-valid" *ngIf="email?.errors?.['required']">
-                        <p>*Email is required</p>
-                    </div>
-                </div> -->
-        
-                <div class="password">
-                    <label for="country">Password</label>
-                    <input type="password" id="password" formControlName="password">
-                </div>
-                <!-- <div class="validation-container" *ngIf="password?.invalid && (password?.touched)">
-                    <div class="email-valid" *ngIf="password?.errors?.['pattern']">
-                        <p>*Invalid Password</p>
-                    </div>
-                    <div class="email-valid" *ngIf="password?.errors?.['required']">
-                        <p>*Password is required</p>
-                    </div>
-                </div> -->
-                <div class="badCredentials" *ngIf="badCredentialsMessage">
-                    <p>*Incorrect email or password</p>
-                </div>
-            </div>
-            <button type="submit" [disabled]="loginForm.invalid" >Login</button>
-            <hr>
-            <br>
-         </form>
-
+                <button type="submit" [ngStyle]="{'background-color':loginForm.invalid?'#89c2d9':''}" [disabled]="loginForm.invalid">Login</button>
+            </form>
+        </div>
     </div>
 </div>

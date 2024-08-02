@@ -1,16 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, map } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { BehaviorSubject, throwError } from 'rxjs';
 import { AddEmployeeRequest } from '../../model/addEmployeeRequest';
+import { PunchService } from '../punch-service/punch.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthenticationService {
-  
+export class AuthenticationService{
+
   isManager(): boolean {
     const role = this.cookie.get('role'); 
   
@@ -31,8 +32,8 @@ export class AuthenticationService {
   constructor(
     private httpClient: HttpClient,
     private cookie: CookieService,
-    @Inject(PLATFORM_ID) private platformId: Object 
-  ) {
+    @Inject(PLATFORM_ID) private platformId: Object,private punchService:PunchService ) {
+
     if (isPlatformBrowser(this.platformId)) {
       this.domain = window.location.hostname;
     }
@@ -51,15 +52,10 @@ export class AuthenticationService {
           this.cookie.set("token", `Bearer ${token}`, 1, '/', this.domain);
           this.cookie.set("username", username, 1, '/', this.domain);
           this.cookie.set("role", JSON.stringify(role), 1, '/', this.domain);
-         
-          sessionStorage.setItem("token", `Bearer ${token}`);
+          this.punchService.currentUsername.next(username);
           }
           return token;
         }),
-        catchError(error => {
-          console.error('Login failed', error);
-          return throwError(error);
-        })
       );
   }
   
@@ -73,7 +69,6 @@ export class AuthenticationService {
     if (this.cookie.get("token")) {
       return this.cookie.get("token");
     }
-    return sessionStorage.getItem("token");
   }
   return null;
   }
@@ -82,9 +77,7 @@ export class AuthenticationService {
     this.cookie.delete("token", '/', this.domain);
     this.cookie.delete("role", '/', this.domain);
     this.cookie.delete("username", '/', this.domain);
-    if (isPlatformBrowser(this.platformId)){
-      sessionStorage.removeItem("token");
-    }
+
   }
 
   getCurrentUserName():string{
@@ -93,4 +86,5 @@ export class AuthenticationService {
     }
     return ""
   }
+
 }
