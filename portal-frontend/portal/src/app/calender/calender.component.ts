@@ -1,4 +1,4 @@
-import {  Component, DoCheck, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { PunchService } from '../service/punch-service/punch.service';
 import { UserService } from '../service/user-service/user.service';
@@ -6,6 +6,7 @@ import { User } from '../model/user';
 import jsPDF from 'jspdf';
 import { Punch } from '../model/punch';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-calender',
@@ -14,7 +15,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 })
 export class CalenderComponent implements OnInit {
 
-    /*Current Week*/
+  /*Current Week*/
   firstDayofThisWeek!: Date;
   weeks: Date[] = [];
 
@@ -67,11 +68,11 @@ export class CalenderComponent implements OnInit {
   async getWeeklyWorkingHours() {
     const startDate = this.weeks[0].toISOString().split("T")[0];
     const endDate = this.weeks[this.weeks.length - 1].toISOString().split("T")[0];
-  
+
     for (const u of this.users) {
       let totalHours = 0;
       let totalMinutes = 0;
-  
+
       await this.punchService.getUserPunchesByDatePeriodOrderedAsc(u.name, startDate, endDate)
         .toPromise()
         .then((data) => {
@@ -81,7 +82,7 @@ export class CalenderComponent implements OnInit {
           totalMinutes += workMinutes;
         })
         .catch((err) => { console.error(`Error fetching punches for ${u.name}:`, err); });
-  
+
       // Convert total minutes into hours and minutes
       let extraHours = Math.floor(totalMinutes / 60);
       totalMinutes = totalMinutes % 60;
@@ -90,7 +91,7 @@ export class CalenderComponent implements OnInit {
     }
     this.createDonutChart();
   }
-  
+
   calculateWorking_BreakingHours(punches: Punch[]): [number, number] {
     let workHours: number = 0;
     let workMinutes: number = 0;
@@ -98,7 +99,7 @@ export class CalenderComponent implements OnInit {
     for (const day of this.weeks) {
       let dayDate = day.toISOString().split('T')[0];
       let dayPunches = punches.filter((p) => p.punchDate === dayDate);
-  
+
       for (let i = 0; i < dayPunches.length; i++) {
         if (i % 2 === 0) { // Working time 
           if (dayPunches[i + 1]) {
@@ -109,22 +110,22 @@ export class CalenderComponent implements OnInit {
             // Handle case for missing checkout (will not calculate the working time in the chart until the punch is closed)
           }
         } else { // Break time , Does not exist in charts
-          
+
         }
       }
     }
-  let newWorkingMinutes = workMinutes+workHours*60;
-   workHours= Math.floor(newWorkingMinutes/60);
-   newWorkingMinutes=newWorkingMinutes%60;
+    let newWorkingMinutes = workMinutes + workHours * 60;
+    workHours = Math.floor(newWorkingMinutes / 60);
+    newWorkingMinutes = newWorkingMinutes % 60;
     return [workHours, newWorkingMinutes];
   }
-  
 
-      // Calculate Daily Hours For Each User as array of numbers with the same order of the days in the week
+
+  // Calculate Daily Hours For Each User as array of numbers with the same order of the days in the week
   async getDailyWorkingHours() {
     const startDate = this.weeks[0].toISOString().split("T")[0];
     const endDate = this.weeks[this.weeks.length - 1].toISOString().split("T")[0];
-  
+
     for (const user of this.users) {
       let dailyHours: number[] = [];
       await this.punchService.getUserPunchesByDatePeriodOrderedAsc(user.name, startDate, endDate)
@@ -137,20 +138,20 @@ export class CalenderComponent implements OnInit {
           console.error(`Error fetching punches for ${user.name} between ${startDate} and ${endDate}:`, error);
           dailyHours = new Array(this.weeks.length).fill(0); // Handle errors by adding 0 hours for each day
         });
-  
+
       this.usersDailyHours.set(user.name, dailyHours);
       console.log("Users daily hours calculation:", this.usersDailyHours);
     }
     this.createBarChart();
   }
-  
+
   calculateDailyWorkingHours(punches: Punch[]): number[] {
     const dailyHours = new Array(this.weeks.length).fill(0);
-  
+
     for (const day of this.weeks) {
       let dayDate = day.toISOString().split('T')[0];
       let dayPunches = punches.filter(p => p.punchDate === dayDate);
-  
+
       if (dayPunches.length > 1) {
         let [hours, minutes] = this.calculateWorking_BreakingHours(dayPunches);
         dailyHours[this.weeks.indexOf(day)] = parseFloat(hours + (minutes < 10 ? `.0${minutes}` : `.${minutes}`));
@@ -158,22 +159,22 @@ export class CalenderComponent implements OnInit {
     }
     return dailyHours;
   }
-  
-  differentBetweenTwoTimes(start:string,end:string): number[]{
-    const startHours=parseInt(start.substring(0,2));
-    const  startMinutes = parseInt(start.substring(3,5));
-    const endHours=parseInt(end.substring(0,2));
-    const  endMinutes = parseInt(end.substring(3,5));
-  
+
+  differentBetweenTwoTimes(start: string, end: string): number[] {
+    const startHours = parseInt(start.substring(0, 2));
+    const startMinutes = parseInt(start.substring(3, 5));
+    const endHours = parseInt(end.substring(0, 2));
+    const endMinutes = parseInt(end.substring(3, 5));
+
     const startTotalMinutes = startHours * 60 + startMinutes;
     const endTotalMinutes = endHours * 60 + endMinutes;
     let difference = endTotalMinutes - startTotalMinutes;
     if (difference < 0) {
-      difference += 24 * 60; 
+      difference += 24 * 60;
     }
     const diffHours = Math.floor(difference / 60);
     const diffMinutes = difference % 60;
-    return [diffHours,diffMinutes]
+    return [diffHours, diffMinutes]
   }
 
   createDonutChart(): void {
@@ -181,7 +182,7 @@ export class CalenderComponent implements OnInit {
     const useresValues: string[] = [];
     this.usersWeeklyHours.forEach((value, key) => {
       usersName.push(key);
-      const concatenatedValue = value[0] + (value[1] < 10 ? `.0${value[1]}` : `.${value[1]}`);      
+      const concatenatedValue = value[0] + (value[1] < 10 ? `.0${value[1]}` : `.${value[1]}`);
       useresValues.push(concatenatedValue);
     });
 
@@ -209,13 +210,13 @@ export class CalenderComponent implements OnInit {
           datalabels: {
             anchor: 'end',
             align: 'start',
-            color: 'white', 
+            color: 'white',
             font: {
-              size: 14, 
-              weight: 'bold', 
-              family: 'Arial', 
-              style: 'italic', 
-            },    formatter: function(value, context) {
+              size: 14,
+              weight: 'bold',
+              family: 'Arial',
+              style: 'italic',
+            }, formatter: function (value, context) {
               return `${value} h`; // Append "h" to each value
             }
           }
@@ -247,7 +248,7 @@ export class CalenderComponent implements OnInit {
     const datasets = usersName.map((name, index) => ({
       label: name,
       data: usersValues[index],
-      backgroundColor:this.RandomColorsGenerator(1)[0]
+      backgroundColor: this.RandomColorsGenerator(1)[0]
     }));
 
     this.barChart = new Chart("barChart", {
@@ -277,7 +278,7 @@ export class CalenderComponent implements OnInit {
               family: 'Arial',
               style: 'normal',
             },
-            formatter: function(value, context) {
+            formatter: function (value, context) {
               return `${value} h`; // Append "h" to each value
             }
           }
@@ -287,8 +288,8 @@ export class CalenderComponent implements OnInit {
     });
   }
 
-  RandomColorsGenerator( quantity :number): string[] {
-    let colors:string[]= []
+  RandomColorsGenerator(quantity: number): string[] {
+    let colors: string[] = []
     for (let i = 0; i < quantity; i++) {
       let color = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
       colors.push(color);
@@ -297,30 +298,70 @@ export class CalenderComponent implements OnInit {
   }
 
   exportChartToPDF(): void {
-    // Check if the chart exists
-    if (!this.chart) {
-      console.error("No chart available to export.");
+    // Check if both charts exist
+    if (!this.chart || !this.barChart) {
+      console.error("Both charts need to be available to export.");
       return;
     }
 
-    // Get base64 image of the chart
-    const chartImage = this.chart.toBase64Image();
-    console.log( "chart ",chartImage)
     // Create a new jsPDF instance
     const pdf = new jsPDF();
 
-    // Add the chart image to the PDF
-    pdf.addImage(chartImage, 'PNG', 10, 10, 75, 75); 
+    // Set PDF title and date
+    const title = 'Employee Working Hours';
+    const date = new Date().toLocaleDateString();
 
-    // Save the PDF
-    pdf.save('chart.pdf');
+    // Set title
+    pdf.setFontSize(18);
+    pdf.text(title, pdf.internal.pageSize.getWidth() / 2, 25, { align: 'center' });
 
-    // Generate the PDF and convert it to a Blob
-    const pdfOutput = pdf.output('blob');
+    //Set weeks
+    const weeks = `Weeks: ${this.weeks[0].toISOString().split('T')[0]} to ${this.weeks[this.weeks.length - 1].toISOString().split('T')[0]}`;
+    pdf.setFont("helvetica", "italic");
+    pdf.setFontSize(14);
+    pdf.text(weeks, pdf.internal.pageSize.getWidth() / 2, 35, { align: 'center' });
 
-    // Create a URL from the Blob and open it in a new window
-    const blobUrl = URL.createObjectURL(pdfOutput);
-    window.open(blobUrl);
+    // Set date
+    pdf.setFontSize(12);
+    pdf.text(`Date: ${date}`, pdf.internal.pageSize.getWidth() / 2, 45, { align: 'center' });
+
+    const logo = new Image();
+    logo.src = '../../assets/images/esense-logo.png';
+    pdf.addImage(logo, 'PNG', 5, 5, 20, 15);
+
+
+    // Add the doughnut chart image to the PDF
+    const donutChartCanvas = document.getElementById('donutChart') as HTMLCanvasElement;
+    html2canvas(donutChartCanvas).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const chartWidth = 100;
+      const chartHeight = chartWidth * canvas.height / canvas.width;
+      pdf.addImage(imgData, 'PNG', (pdf.internal.pageSize.getWidth() - chartWidth) / 2, 55, chartWidth, chartHeight);
+
+      // Add the bar chart image to the PDF
+      const barChartCanvas = document.getElementById('barChart') as HTMLCanvasElement;
+      html2canvas(barChartCanvas).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const barChartWidth = pdf.internal.pageSize.getWidth() - 20;
+        const barChartHeight = barChartWidth * canvas.height / canvas.width;
+        const yOffset = 50 + chartHeight;
+        pdf.addImage(imgData, 'PNG', 10, yOffset, barChartWidth, barChartHeight);
+
+
+        pdf.setFontSize(10);
+      pdf.text('Page 1 of 1', pdf.internal.pageSize.getWidth() / 2, pdf.internal.pageSize.getHeight() - 10, { align: 'center' });
+      
+        // Save the PDF
+        pdf.save('charts.pdf');
+
+        // Generate the PDF and convert it to a Blob
+        const pdfOutput = pdf.output('blob');
+
+        // Create a URL from the Blob and open it in a new window
+        const blobUrl = URL.createObjectURL(pdfOutput);
+        window.open(blobUrl);
+      });
+    });
   }
 
   nextWeek(): void {

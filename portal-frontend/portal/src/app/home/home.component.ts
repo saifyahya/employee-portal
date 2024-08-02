@@ -1,9 +1,10 @@
-import { Component, DoCheck, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, DoCheck, OnChanges, OnInit, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { User } from '../model/user';
 import { UserService } from '../service/user-service/user.service';
 import { Punch } from '../model/punch';
 import { PunchService } from '../service/punch-service/punch.service';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-home',
@@ -20,13 +21,22 @@ export class HomeComponent implements OnInit {
   searchedEmployee: any;
 
   viewCharts: boolean = false;
-  constructor(private userService: UserService, private punshservice: PunchService, private router: Router) {
+
+  @ViewChild('deleteModal', { static: true }) deleteModal!: TemplateRef<any>;     
+  userToDelete='';
+  userDeletedSuccess='';
+  userNotDeleted='';
+  constructor(private userService: UserService, private punshservice: PunchService, private router: Router,private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
     this.getUsersByDepartment();
   }
 
+  openDeleteModal(userEmail:string){
+    this.userToDelete=userEmail;
+    this.modalService.open(this.deleteModal);
+  }
   getUsersByDepartment() {
     if (this.selected_department === "All")
       this.getAllUsers();
@@ -110,10 +120,18 @@ export class HomeComponent implements OnInit {
     this.router.navigateByUrl("/attendance")
   }
 
-  deleteUser(userEmail: string) {
-    this.userService.deleteByEmail(userEmail).subscribe({
-      next: (data) => { alert("User deleted successfully") },
-      error: (error) => { alert("Failed to delete User") }
+  deleteUser() {
+    this.userService.deleteByEmail(this.userToDelete).subscribe({
+      next: (data) => { 
+        this.userDeletedSuccess=`User ${this.userToDelete} Deleted Successfully`
+        this.getUsersByDepartment();
+        setTimeout(()=>this.userDeletedSuccess='',3000);
+      },
+      error: (error) => { console.log("error deleting user: ", error);
+        this.userNotDeleted=`Errorr Deleting User ${this.userToDelete}. Refresh the page and try again`;
+        setTimeout(()=>this.userNotDeleted='',3000);
+
+      }
     }
     )
   }

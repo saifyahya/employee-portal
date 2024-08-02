@@ -45,7 +45,7 @@ getUsersContaingName(name:string):Observable<User[]>{
 }
 
 deleteByEmail(userEmail: string):Observable<string> {
-  const api=`${this.baseApi}/email=${userEmail}`;
+  const api=`${this.baseApi}?email=${userEmail}`;
   return this.http.delete<{status:string, message:string}>(api).pipe(map((res)=> {
     console.log("service api",res.message);
     return res.message; }))  }
