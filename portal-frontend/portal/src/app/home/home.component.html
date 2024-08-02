@@ -39,7 +39,7 @@
               <td>{{user.joiningDate.toString()}}</td>
               <td>{{getFirstPunchTime(user)[0] || ""}} <br> {{getFirstPunchTime(user)[1]}} </td>
               <td>{{getlastPunchTime(user)[0] || ""}} <br> {{getlastPunchTime(user)[1]}} </td>
-              <td (click)="deleteUser(user.email)" class="employee-delete">delete user Account</td>
+              <td (click)="openDeleteModal(user.email)" class="employee-delete">delete user Account</td>
             </tr>
           </tbody>
         </table>
@@ -48,6 +48,27 @@
   </div>
   <hr>
   <button class="view-charts" (click)="toggleViewCharts($event)">View Employees Working Hours Charts</button>
+
+
+  <ng-template #deleteModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">Removing User</h4>
+    </div>
+    <div class="modal-body">
+
+        <p>Remove User : {{userToDelete}}</p>
+
+        <div class="alert alert-success" *ngIf="userDeletedSuccess"> {{userDeletedSuccess}}</div>
+        <div *ngIf="userNotDeleted" class="alert alert-danger"> {{userNotDeleted}}</div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close(); userToDelete=''; userDeletedSuccess='';userNotDeleted=''">Close</button>
+        <button type="button" class="btn btn-primary" (click)="deleteUser()">Delete</button>
+    </div>
+</ng-template>
+
+
 
 <ng-container *ngIf="viewCharts">
   <app-calender></app-calender>

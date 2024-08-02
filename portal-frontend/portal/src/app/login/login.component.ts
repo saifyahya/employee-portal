@@ -39,7 +39,7 @@ export class LoginComponent {
     console.log('email: ' + email + " password: " + password);
     this.authService.login(email, password).subscribe({
       next: (res) => { console.log(res) ; 
-      this.router.navigateByUrl('/')},
+      this.router.navigateByUrl('/attendance')},
       error: (err) => { 
         console.log(err) ; 
         this.badCredentialsMessage=true;
