@@ -23,32 +23,29 @@ import java.util.List;
 public class PunchController {
     private IPunchService punchService;
 
-//    @GetMapping("/punches")
-//    public ResponseEntity<List<PunchDto>> getAllUserPunches(@RequestParam String name) {
-//        List<PunchDto> punches = punchService.getAllUserPunches(name);
-//        return new ResponseEntity<>(punches, HttpStatus.OK);
-//    }
-
-//    @GetMapping("/punches/date")
-//    public ResponseEntity<List<PunchDto>> getAllUserPunchesByDate(@RequestParam String name, @RequestParam LocalDate date) {
-//        List<PunchDto> punches = punchService.getUserPunchesByDate(name, date);
-//        return new ResponseEntity<>(punches, HttpStatus.OK);
-//    }
-
     @GetMapping("/punches/dates")
     public ResponseEntity<List<PunchDto>> getAllUserPunchesByDatePeriod(@RequestParam String name, @RequestParam LocalDate sDate,@RequestParam LocalDate eDate) {
         List<PunchDto> punches = punchService.getUserPunchesWithinDatePeriod(name, sDate,eDate);
         return new ResponseEntity<>(punches, HttpStatus.OK);
     }
 
+    @GetMapping("/punches/date/name")
+    public ResponseEntity<PunchDto> getUserLastPunchByDateAndUserName(@RequestParam String name, @RequestParam LocalDate date) {
+        PunchDto punch = punchService.getUserLastPunchByDateAndUsername(name, date);
+        return new ResponseEntity<>(punch, HttpStatus.OK);
+    }
+    @GetMapping("/punches/date/email")
+    public ResponseEntity<PunchDto> getUserLastPunchByDateAndUserEmail(@RequestParam String email, @RequestParam LocalDate date) {
+        PunchDto punch = punchService.getUserLastPunchByDateAndUserEmail(email, date);
+        return new ResponseEntity<>(punch, HttpStatus.OK);
+    }
+
     @PostMapping("/punches")
-    public ResponseEntity<ResponseDto> SaveUserPunch(@RequestParam String type, Authentication authentication,Principal principal) {
-        UserPrincipal principal2 = (UserPrincipal)authentication.getPrincipal();
-        System.out.println(principal.getName());
-        System.out.println(principal2.getUsername());
+    public ResponseEntity<ResponseDto> SaveUserPunch(@RequestParam String type, Authentication authentication) {
+        UserPrincipal principal = (UserPrincipal)authentication.getPrincipal();
         if(principal!=null) {
             PunchDto punchDto = new PunchDto(LocalDate.now(), LocalTime.now(),type);
-            punchService.savePunch(punchDto, principal2.getUsername());
+            punchService.savePunch(punchDto, principal.getUsername());
             return new ResponseEntity<>(new ResponseDto(true, HttpStatus.OK.toString()), HttpStatus.OK);
         }
         else {

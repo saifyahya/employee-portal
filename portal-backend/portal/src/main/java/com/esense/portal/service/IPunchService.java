@@ -5,10 +5,14 @@ import com.esense.portal.entity.Punch;
 
 import java.time.LocalDate;
 import  java.util.List;
+import java.util.Optional;
 
 public interface IPunchService {
 
    List<PunchDto> getAllUserPunches(String username);
+
+   PunchDto getUserLastPunchByDateAndUserEmail(String userEmail, LocalDate punchDate);
+   PunchDto getUserLastPunchByDateAndUsername(String username,LocalDate punchDate);
 
    long getUserPunchesCount(String username);
 
