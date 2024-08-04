@@ -21,7 +21,6 @@ public class UserController {
     private IUserService userService;
 
     @GetMapping("/users/count")
-
     public ResponseEntity<ResponseDto> getAllUsersCount(){
         long usersCount=  userService.getAllUsersCount();
         return new ResponseEntity<>(new ResponseDto(true,usersCount+""),HttpStatus.OK);
@@ -38,6 +37,29 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getAllUsers(){
         List<UserDto> userDtos=  userService.getAllUsers();
         return new ResponseEntity<>(userDtos,HttpStatus.OK);
+    }
+
+    @GetMapping("/users/fullName")
+    public ResponseEntity<List<String>> getAllUsersFullName(){
+        List<String> users=  userService.getAllUsersName();
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
+
+    @GetMapping("/users/fullEmail")
+    public ResponseEntity<List<String>> getAllUsersFullEmail(){
+        List<String> users=  userService.getAllUsersEmail();
+        return new ResponseEntity<>(users,HttpStatus.OK);
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<ResponseDto> updateUser(@RequestParam String email,@RequestBody UserDto userDto){
+       boolean isUpdated = userService.updateUser( email, userDto);
+       if(isUpdated){
+           return new ResponseEntity<>(new ResponseDto(true,"User Updated"),HttpStatus.OK);
+       }
+       else{
+           return new ResponseEntity<>(new ResponseDto(false,"User has not been updated "),HttpStatus.OK);
+       }
     }
 
     @GetMapping("/users/name")

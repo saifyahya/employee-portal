@@ -16,6 +16,7 @@ public class UserMapper {
     userDto.setDepartment(user.getDepartment());
     userDto.setPosition(user.getPosition());
     userDto.setJoiningDate(user.getJoiningDate());
+    userDto.setPhoneNumber((user.getPhoneNumber()));
     List<PunchDto> punchDtoList = new ArrayList<>();
     user.getPunches().forEach((punch)->{
         PunchDto punchDto = PunchMapper.toPunchDto(new PunchDto(),punch);
@@ -30,13 +31,16 @@ public class UserMapper {
         user.setEmail(userDto.getEmail());
         user.setDepartment(userDto.getDepartment());
         user.setPosition(userDto.getPosition());
+        user.setPhoneNumber(userDto.getPhoneNumber());
         user.setJoiningDate(userDto.getJoiningDate());
-        List<Punch> punchList = new ArrayList<>();
-        userDto.getPunches().forEach((punchDto)->{
-            Punch punch = PunchMapper.fromPunchDto(punchDto, new Punch());
-            punchList.add(punch);
-        });
-        user.setPunches(punchList);
+        if(userDto.getPunches()!=null && userDto.getPunches().size()>0){
+            List<Punch> punchList = new ArrayList<>();
+            userDto.getPunches().forEach((punchDto)->{
+                Punch punch = PunchMapper.fromPunchDto(punchDto, new Punch());
+                punchList.add(punch);
+            });
+            user.setPunches(punchList);
+        }
         return user;
     }
 
