@@ -1,11 +1,9 @@
 package com.esense.portal.service;
 
 import com.esense.portal.dto.UserDto;
-import com.esense.portal.entity.User;
 import com.esense.portal.enums.DepartmentEnum;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface IUserService {
 
@@ -19,5 +17,11 @@ public interface IUserService {
     List<UserDto> getUsersContainingName(String name);
    UserDto getUserByName(String name);
 
+   boolean updateUser(String userOriginalEmail, UserDto userDto);
+
    void deleteUser(String userEmail);
+
+    List<String> getAllUsersName();
+    List<String> getAllUsersEmail();
+
 }

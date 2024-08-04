@@ -68,8 +68,29 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public boolean updateUser(String userOriginalEmail,UserDto userDto) {
+        boolean isUpdated = false;
+        if(userDto!=null){
+            User user = userRepository.findByEmail(userOriginalEmail).orElseThrow(()->new ResourceNotFoundException("User","email",userDto.getEmail()));
+            User updatedUser = UserMapper.toUser(userDto,user);
+            userRepository.save(updatedUser);
+            isUpdated = true;
+        }
+        return isUpdated;
+    }
+
+    @Override
     public void deleteUser(String userEmail) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(()->new ResourceNotFoundException("User","Email",userEmail));
         userRepository.delete(user);
     }
+
+    @Override
+    public List<String> getAllUsersName() {
+        return userRepository.findAllUsersName();
+    }
+
+    @Override
+    public List<String> getAllUsersEmail() {
+        return userRepository.findAllUsersEmail();    }
 }

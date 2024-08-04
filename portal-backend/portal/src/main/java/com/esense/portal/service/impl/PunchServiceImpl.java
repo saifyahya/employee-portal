@@ -12,8 +12,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -33,17 +35,25 @@ public class PunchServiceImpl implements IPunchService {
 
     @Override
     public PunchDto getUserLastPunchByDateAndUserEmail(String userEmail, LocalDate punchDate) {
-        Punch punch = punchRepository.findFirst1ByUserEmailAndPunchDateOrderByPunchDateAscPunchTimeDesc(userEmail,punchDate)
-                .orElseThrow(()->new ResourceNotFoundException("Punch","User emailAnd Date",userEmail+' '+punchDate));
-        PunchDto  punchDto=PunchMapper.toPunchDto(new PunchDto(),punch);
+        Optional<Punch> punch = punchRepository.findFirst1ByUserEmailAndPunchDateOrderByPunchDateAscPunchTimeDesc(userEmail,punchDate);
+        PunchDto  punchDto;
+        if(punch.isPresent()){
+            punchDto =PunchMapper.toPunchDto(new PunchDto(),punch.get());
+        }else{
+            punchDto = new PunchDto();
+        }
         return punchDto;
     }
 
     @Override
     public PunchDto getUserLastPunchByDateAndUsername(String username, LocalDate punchDate) {
-        Punch punch = punchRepository.findFirst1ByUserNameAndPunchDateOrderByPunchDateAscPunchTimeDesc(username,punchDate)
-                .orElseThrow(()->new ResourceNotFoundException("Punch","Username And Date",username+' '+punchDate));
-        PunchDto  punchDto=PunchMapper.toPunchDto(new PunchDto(),punch);
+        Optional<Punch> punch = punchRepository.findFirst1ByUserNameAndPunchDateOrderByPunchDateAscPunchTimeDesc(username,punchDate);
+        PunchDto  punchDto;
+        if(punch.isPresent()){
+            punchDto =PunchMapper.toPunchDto(new PunchDto(),punch.get());
+        }else{
+             punchDto = new PunchDto();
+        }
         return punchDto;
     }
 
@@ -63,16 +73,16 @@ public class PunchServiceImpl implements IPunchService {
         }
     }
 
-    @Override
-    public List<PunchDto> getUserPunchesByDate(String username, LocalDate date) {
-        List<Punch> punchLis = punchRepository.findAllByUser_NameAndPunchDateOrderByPunchTimeAsc(username,date);
-        List<PunchDto> punchDtos = new ArrayList<>();
-        punchLis.forEach((punch)->{
-            PunchDto punchDto = PunchMapper.toPunchDto(new PunchDto(),punch);
-            punchDtos.add(punchDto);
-        });
-        return punchDtos;
-    }
+//    @Override
+//    public List<PunchDto> getUserPunchesByDate(String username, LocalDate date) {
+//        List<Punch> punchLis = punchRepository.findAllByUser_NameAndPunchDateOrderByPunchTimeAsc(username,date);
+//        List<PunchDto> punchDtos = new ArrayList<>();
+//        punchLis.forEach((punch)->{
+//            PunchDto punchDto = PunchMapper.toPunchDto(new PunchDto(),punch);
+//            punchDtos.add(punchDto);
+//        });
+//        return punchDtos;
+//    }
 
     @Override
     public List<PunchDto> getUserPunchesWithinDatePeriod(String username, LocalDate startDate, LocalDate endDate) {
@@ -83,6 +93,23 @@ public class PunchServiceImpl implements IPunchService {
             punchDtos.add(punchDto);
         });
         return punchDtos;
+    }
+
+    @Override
+    public boolean deletePunchByUserEmail_PunchDate_PunchTime(String userEmail, LocalDate punchDate, LocalTime punchTime) {
+        boolean isDeleted = false;
+        Optional<User> user = userRepository.findByEmail(userEmail);
+        if (user.isPresent()) {
+            User retrievedUser = user.get();
+            Optional<Punch> punch = punchRepository.findByUserEmailAndPunchDateAndPunchTime(retrievedUser.getEmail(), punchDate, punchTime);
+            if (punch.isPresent()) {
+                Punch retrievedPunch = punch.get();
+                System.out.println("Punch deleted successful");
+                punchRepository.deleteById(retrievedPunch.getId());
+                isDeleted = true;
+            }
+        }
+        return isDeleted;
     }
 
 }

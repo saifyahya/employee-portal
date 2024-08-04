@@ -26,6 +26,7 @@ public class UserDto {
 
     private String email;
 
+    private String phoneNumber;
     private LocalDate joiningDate;
 
     private String position;
