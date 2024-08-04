@@ -76,4 +76,14 @@ export class PunchService  {
     return ""
   }
 
+  deletePunch(email:string,date:string,time:string):Observable<{status:boolean, message:string}>{
+    const api = `${this.baseApi}?email=${email}&date=${date}&time=${time}`;
+    console.log(api);
+    
+    return this.http.delete<{status:boolean, message:string}>(api).pipe(map((res) => {
+      console.log("service api", res);
+      return res;
+    }))
+  }
+
 }

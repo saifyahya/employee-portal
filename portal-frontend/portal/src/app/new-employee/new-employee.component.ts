@@ -3,6 +3,9 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { AuthenticationService } from '../service/authentication-service/authentication.service';
 import { Router } from '@angular/router';
 import { AddEmployeeRequest } from '../model/addEmployeeRequest';
+import { UserService } from '../service/user-service/user.service';
+import { debounceTime, of, switchMap } from 'rxjs';
+import e from 'express';
 
 @Component({
   selector: 'app-new-employee',
@@ -15,13 +18,24 @@ export class NewEmployeeComponent implements OnInit {
   signupForm!: FormGroup;
   departments: string[] = ["Software Development", "QA", "Mobile Development", "BA", "HR", "IT", "Product Development", "Marketing"]
   viewDatePicker = false;
-
-  constructor(private formBuilder: FormBuilder, private authService: AuthenticationService, private router: Router) { }  // Fixed typo: fromChildBuilder to formBuilder and aurhService to authService
+  userNames:string[]=[];
+  userEmails:string[]=[];
+  nameAlreadyExist: boolean=false;
+  emailAlreadyExist: boolean=false;
+  constructor(private formBuilder: FormBuilder, private authService: AuthenticationService, private router: Router,private userService:UserService) { }  // Fixed typo: fromChildBuilder to formBuilder and aurhService to authService
 
   ngOnInit(): void {
     this.model = { year: 2024, month: 7, day: 30 }; // Default date
-
+    this.getUsersNames_Emails();
     this.buildSignupForm();
+  }
+  getUsersNames_Emails() {
+    this.userService.getAllUserNames().subscribe((data)=>{
+      this.userNames=data;
+    })
+    this.userService.getAllUserEmails().subscribe((data)=>{
+      this.userEmails=data;
+    })
   }
 
   toggoleDatePicker(e: Event) {
@@ -30,11 +44,21 @@ export class NewEmployeeComponent implements OnInit {
   }
 
   submitSignup() {
+    
     const joiningDate: { year: number, month: number, day: number } = this.signupForm.get('userData.joining_date')?.value;
     let d = new Date();
     d.setFullYear(joiningDate.year)
     d.setMonth(joiningDate.month - 1)
     d.setDate(joiningDate.day);
+
+  if(this.checkName(this.signupForm.get('userData.emp_name')?.value) ){
+    this.nameAlreadyExist=true;
+    return;
+  }
+  if(this.checkEmail(this.signupForm.get('userData.email')?.value) ){
+    this.emailAlreadyExist=true;
+    return;
+  }
     let request = new AddEmployeeRequest(
       this.signupForm.get('userData.emp_name')?.value,
       this.mapDepartmentToEnums(this.signupForm.get('userData.department')?.value),
@@ -55,12 +79,21 @@ export class NewEmployeeComponent implements OnInit {
     })
   }
 
+  checkName(name: string): boolean {
+    return this.userNames.some(n => n === name);
+  }
+  checkEmail(email: string): boolean {
+    return this.userEmails.some(n => n === email);
+  }
+
   mapDepartmentToEnums(departmentEnum: string): string {
     if (departmentEnum === "Mobile Development")
       return "MOBILE_DEVELOPMENT"
     if (departmentEnum === "Software Development")
       return "SOFTWARE_DEVELOPMENT"
-    return departmentEnum
+     if (departmentEnum === "Product Development")
+      return "PRODUCT_DEVELOPMENT"
+    return departmentEnum;
   }
 
   PasswordsMatches(g: FormGroup) {
@@ -92,6 +125,7 @@ export class NewEmployeeComponent implements OnInit {
       }, { validators: this.PasswordsMatches })
     });
   }
+
 
   get email() {
     return this.signupForm.get('userData.email')

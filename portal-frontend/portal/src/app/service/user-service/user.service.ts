@@ -3,6 +3,7 @@ import { Injectable, OnInit } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { User } from '../../model/user';
 import { log } from 'console';
+import { UpdateEmployeeRequest } from '../../model/UpdateEmployeeRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ import { log } from 'console';
 export class UserService implements OnInit{
 
  baseApi = "http://localhost:8080/api/v1/users";
+  httpClient: any;
   constructor(private http:HttpClient) { }
 
   ngOnInit(): void {
@@ -50,5 +52,18 @@ deleteByEmail(userEmail: string):Observable<string> {
     console.log("service api",res.message);
     return res.message; }))  }
 
+    getAllUserNames():Observable<string[]>{
+      const api=`${this.baseApi}/fullName`;
+      return this.http.get<string[]>(api).pipe(map((res)=> {return res}))
+    }
+    getAllUserEmails():Observable<string[]>{
+      const api=`${this.baseApi}/fullEmail`;
+      return this.http.get<string[]>(api).pipe(map((res)=> {return res}))
+    }
+
+    updateUser(userOriginalEmail: string, updatedUser:UpdateEmployeeRequest):Observable<{status:boolean, message:string}>{
+      return this.http.put<{status:boolean, message:string}>(`${this.baseApi}?email=${userOriginalEmail}`, updatedUser).pipe(map((res) => { return res; }));
+      
+    }
 
 }

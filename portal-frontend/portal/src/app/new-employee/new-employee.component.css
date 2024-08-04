@@ -107,6 +107,9 @@ input:focus {
     width: 200px;
     padding: 2px;
 }
+.alreadyExist{
+    color: red;
+}
 
 .validation-container .password-valid p {
     margin: 0;
