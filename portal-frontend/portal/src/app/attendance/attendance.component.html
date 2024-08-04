@@ -23,7 +23,6 @@
                 <option [ngValue]="'office'" selected>Office</option>
                 <option [ngValue]="'home'">Home</option>
             </select>
-
             <button class="datepicker-button" (click)="toggoleDatePicker($event)" *ngIf="isManager()">Pick Date
                 {{pickedPunchDate.year +'-'+pickedPunchDate.month+'-'+pickedPunchDate.day}}</button>
             <div class="container" *ngIf="viewDatePicker">
@@ -53,7 +52,7 @@
         <div class="">
             {{ day.toDateString() }}
             <ng-container *ngFor="let punch of punches" class="punches">
-                <span *ngIf="isPunchInThisDay(punch, day)" class="punches">
+                <span *ngIf="isPunchInThisDay(punch, day)" class="punches"  (click)="punchClicked(punch)">
                     {{ formatPunchTime(punch.punchTime) }}
                 </span>
                 <img src="../../assets/images/home-vector-icon.png"
@@ -78,5 +77,22 @@
                 breakReminder.get(day.toISOString().split('T')[0]) }}</p>
         </div>
     </div>
+    <ng-template #deletePunchModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">Removing Punch</h4>
+        </div>
+        <div class="modal-body">
+    
+            <p>Remove Punch For Employee : {{getUserEmailToAddPunchByAdmin()}}</p>
+            <p>Punch Date: {{punchToDelete.punchDate}}</p>
+            <p>Punch Time: {{punchToDelete.punchTime}}</p>
+            <div class="alert alert-info" > Removing a Punch will affect Working and Breaking hours</div>
+    
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.close();">Close</button>
+            <button type="button" class="btn btn-primary" (click)="deletePunch()">Remove</button>
+        </div>
+    </ng-template>
     <button (click)="downloadReport()">Get Punches Report</button>
 </div>

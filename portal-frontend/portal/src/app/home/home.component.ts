@@ -5,6 +5,8 @@ import { Punch } from '../model/punch';
 import { PunchService } from '../service/punch-service/punch.service';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { UpdateEmployeeRequest } from '../model/UpdateEmployeeRequest';
+import { AuthenticationService } from '../service/authentication-service/authentication.service';
 
 @Component({
   selector: 'app-home',
@@ -13,6 +15,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   providers: []
 })
 export class HomeComponent implements OnInit {
+
 
   users!: User[];
   usersCount: number = 0;
@@ -26,17 +29,104 @@ export class HomeComponent implements OnInit {
   userToDelete='';
   userDeletedSuccess='';
   userNotDeleted='';
-  constructor(private userService: UserService, private punshservice: PunchService, private router: Router,private modalService: NgbModal) {
-  }
 
+  @ViewChild('updateModal', { static: true }) updateModal!: TemplateRef<any>;     
+  userToUpdate!:User;
+  userUpdatedSuccess='';
+  userNotUpdated='';
+  userName='';
+  userPosition='';
+  userEmail='';
+  userJoiningDate='';
+  userPhoneNumber='';
+  emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  userDepartments: string[] = ["Software Development", "QA", "Mobile Development", "BA", "HR", "IT", "Product Development", "Marketing"]
+  updatedUserDepartment='';
+  userNames: string[]=[];
+  userEmails: string[]=[];
+  invalidEmail: boolean=false;
+  emailAlreadyExist: boolean=false;
+  nameAlreadyExist: boolean=false;
+  constructor(private userService: UserService, private punshservice: PunchService,
+     private router: Router,private modalService: NgbModal,private auth:AuthenticationService) {
+  }
+  checkNameExist(){
+    if (this.checkName(this.userName)){
+      this.nameAlreadyExist=true;
+    }else{
+      this.nameAlreadyExist=false;
+    }
+  }
+  checkEmailExist(){
+    if (this.checkEmail(this.userEmail)){
+      this.emailAlreadyExist=true;
+    }else{
+      this.emailAlreadyExist=false;
+    }
+    if(!this.userEmail.match(this.emailPattern)){
+      this.invalidEmail=true;
+    }
+    else{
+      this.invalidEmail=false;
+    }
+  }
   ngOnInit(): void {
     this.getUsersByDepartment();
+    this.getUsersNames_Emails();
+  }
+
+  getUsersNames_Emails() {
+    this.userService.getAllUserNames().subscribe((data)=>{
+      this.userNames=data;
+    })
+    this.userService.getAllUserEmails().subscribe((data)=>{
+      this.userEmails=data;
+    })
   }
 
   openDeleteModal(userEmail:string){
     this.userToDelete=userEmail;
     this.modalService.open(this.deleteModal);
   }
+  openUpdateModal(user: User) {
+    this.userToUpdate=user;
+    this.userName=user.name;
+    this.userEmail=user.email;
+    this.userPosition=user.position;
+    this.userPhoneNumber=user.phoneNumber;
+    this.updatedUserDepartment=user.department;
+    this.userJoiningDate=user.joiningDate.toString();
+    this.modalService.open(this.updateModal);   
+   }
+
+    updateUser(){
+      if(!this.userEmail.match(this.emailPattern)){this.invalidEmail=true;setTimeout(()=>{this.invalidEmail=false},3000); return;}
+      if(this.checkEmail(this.userEmail)){this.emailAlreadyExist=true;setTimeout(()=>{this.emailAlreadyExist=false},3000);return;}
+      if(this.checkName(this.userName)){this.nameAlreadyExist=true;setTimeout(()=>{this.nameAlreadyExist=false},3000);return;}
+       const updateRequest:UpdateEmployeeRequest = new UpdateEmployeeRequest(
+        this.userName,
+        this.mapDepartmentToEnums(this.updatedUserDepartment),
+        this.userEmail,
+        this.userPosition,
+        this.userPhoneNumber,
+        this.userJoiningDate,
+      )
+      console.log(updateRequest);
+      
+      this.userService.updateUser(this.userToUpdate.email,updateRequest).subscribe({
+        next:()=>{this.userUpdatedSuccess="User Details Updated"; 
+          if(this.auth.getCurrentUserName()===this.userToUpdate.name){
+            this.modalService.dismissAll();
+            this.auth.logout();
+            this.router.navigateByUrl('signin'); }   
+          setTimeout(()=>{this.userUpdatedSuccess=''},3000);
+             this.getUsersByDepartment();
+      },
+        error:(err)=>{this.userNotUpdated="Error Updating User. Refresh ths Page And Try Again";setTimeout(()=>{this.userNotUpdated=''},3000)}
+      })
+    }
+
   getUsersByDepartment() {
     if (this.selected_department === "All")
       this.getAllUsers();
@@ -123,7 +213,11 @@ export class HomeComponent implements OnInit {
   deleteUser() {
     this.userService.deleteByEmail(this.userToDelete).subscribe({
       next: (data) => { 
-        this.userDeletedSuccess=`User ${this.userToDelete} Deleted Successfully`
+        this.userDeletedSuccess=`User ${this.userToDelete} Deleted Successfully`;
+        if(this.auth.getCurrentUserName()===this.userToUpdate.name){
+          this.modalService.dismissAll();
+          this.auth.logout();
+          this.router.navigateByUrl('signin'); } 
         this.getUsersByDepartment();
         setTimeout(()=>this.userDeletedSuccess='',3000);
       },
@@ -136,15 +230,21 @@ export class HomeComponent implements OnInit {
     )
   }
 
-
+  checkName(name: string): boolean {
+    return this.userNames.some(n => n === name);
+  }
+  checkEmail(email: string): boolean {
+    return this.userEmails.some(n => n === email);
+  }
   mapDepartmentToEnums(departmentEnum: string): string {
     if (departmentEnum === "Mobile Development")
       return "MOBILE_DEVELOPMENT"
     if (departmentEnum === "Software Development")
       return "SOFTWARE_DEVELOPMENT"
-    return departmentEnum
+     if (departmentEnum === "Product Development")
+      return "PRODUCT_DEVELOPMENT"
+    return departmentEnum;
   }
-
 
   formatDepartmentEnums(departmentEnum: string): string {
     if (departmentEnum === "MOBILE_DEVELOPMENT")
@@ -153,7 +253,6 @@ export class HomeComponent implements OnInit {
       return "Software Development"
     return departmentEnum
   }
-
 toggleViewCharts(event:Event){
   event.preventDefault()
   this.viewCharts=!this.viewCharts;

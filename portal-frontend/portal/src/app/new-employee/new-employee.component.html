@@ -15,6 +15,9 @@
                                 <p>*Employee Name is required</p>
                             </div>
                         </div>
+                        <div class="alreadyExist" *ngIf="nameAlreadyExist">
+                            <p>*Employee Name already exists</p>
+                          </div>
                     </div>
                     <div class="department">
                         <label for="lastName">Department</label>
@@ -44,6 +47,9 @@
                                 <p>*Email is required</p>
                             </div>
                         </div>
+                        <div class="alreadyExist" *ngIf="emailAlreadyExist">
+                            <p>*Employee Email already exists</p>
+                          </div>
                     </div>
                 </div>
 

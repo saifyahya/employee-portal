@@ -24,8 +24,10 @@
               <th>Department</th>
               <th>Position</th>
               <th>Joining Date</th>
+              <th>Phone Number</th>
               <th> Latest Checkin </th>
               <th> Latest Checkout </th>
+              <th></th>
               <th></th>
             </tr>
           </thead>
@@ -37,9 +39,12 @@
               <td>{{formatDepartmentEnums(user.department)}}</td>
               <td>{{user.position}}</td>
               <td>{{user.joiningDate.toString()}}</td>
+              <td>{{user.phoneNumber}}</td>
               <td>{{getFirstPunchTime(user)[0] || ""}} <br> {{getFirstPunchTime(user)[1]}} </td>
               <td>{{getlastPunchTime(user)[0] || ""}} <br> {{getlastPunchTime(user)[1]}} </td>
-              <td (click)="openDeleteModal(user.email)" class="employee-delete">delete user Account</td>
+              <td (click)="openDeleteModal(user.email)" class="employee-delete">delete Employee Account</td>
+              <td (click)="openUpdateModal(user)" class="employee-delete">Update Employee Account</td>
+
             </tr>
           </tbody>
         </table>
@@ -52,11 +57,12 @@
 
   <ng-template #deleteModal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title">Removing User</h4>
+        <h4 class="modal-title">Removing Employee</h4>
     </div>
     <div class="modal-body">
 
-        <p>Remove User : {{userToDelete}}</p>
+        <p>Remove Employee : {{userToDelete}}</p>
+        <div class="alert alert-info" > If you are a manager, you will be loged out after successful deleting</div>
 
         <div class="alert alert-success" *ngIf="userDeletedSuccess"> {{userDeletedSuccess}}</div>
         <div *ngIf="userNotDeleted" class="alert alert-danger"> {{userNotDeleted}}</div>
@@ -67,7 +73,32 @@
         <button type="button" class="btn btn-primary" (click)="deleteUser()">Delete</button>
     </div>
 </ng-template>
-
+<ng-template #updateModal let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">Updating Employee</h4>
+  </div>
+  <div class="modal-body">
+      <p>Update Employee : {{userToUpdate.email}}</p>
+      <div class="alert alert-info" > If you are a manager, you will be loged out after successful updating</div>
+      <input [(ngModel)]="userEmail"(input)="checkEmailExist()">
+        <div class="alert alert-danger" *ngIf="emailAlreadyExist"> Email Already Exist. Try another one</div>
+        <div class="alert alert-danger" *ngIf="invalidEmail"> Invalid Email. Try another one</div>
+        <input [(ngModel)]="userName" (input)="checkNameExist()">
+        <div class="alert alert-danger" *ngIf="nameAlreadyExist"> Name Already Exist. Try another one</div>
+        <input [(ngModel)]="userPosition">
+        <input [(ngModel)]="userPhoneNumber">
+        <input [(ngModel)]="userJoiningDate" type="date" >
+        <select [(ngModel)]="updatedUserDepartment" aria-placeholder="choose Department">
+          <option *ngFor="let dep of userDepartments" [ngValue]="dep" >{{dep}}</option>
+        </select>
+      <div class="alert alert-success" *ngIf="userUpdatedSuccess"> {{userUpdatedSuccess}}</div>
+      <div *ngIf="userNotUpdated" class="alert alert-danger"> {{userNotUpdated}}</div>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modal.close(); userUpdatedSuccess='';userNotUpdated=''">Close</button>
+      <button type="button" class="btn btn-primary" (click)="updateUser()">Update</button>
+  </div>
+</ng-template>
 
 
 <ng-container *ngIf="viewCharts">

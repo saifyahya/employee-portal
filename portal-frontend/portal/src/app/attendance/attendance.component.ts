@@ -1,11 +1,10 @@
-import {  Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { PunchService } from '../service/punch-service/punch.service';
 import { Punch } from '../model/punch';
 import { AuthenticationService } from '../service/authentication-service/authentication.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { JasperService } from '../service/jasper-report-service/jasper.service';
 import { UserService } from '../service/user-service/user.service';
-import { log } from 'console';
 
 @Component({
   selector: 'app-attendance',
@@ -13,9 +12,11 @@ import { log } from 'console';
   styleUrl: './attendance.component.css',
   providers: []
 })
-export class AttendanceComponent implements OnInit ,OnDestroy{
+export class AttendanceComponent implements OnInit, OnDestroy {
 
-     /*  User Punches, Weeks Array, User working/Breaking hours */
+
+
+  /*  User Punches, Weeks Array, User working/Breaking hours */
   currentUsername = '';
   punches!: Punch[];
   firstDayofThisWeek!: Date;
@@ -24,27 +25,28 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
   BreakingHours: Map<string, number[]> = new Map<string, number[]>();
   workReminder: Map<string, string> = new Map<string, string>();
   breakReminder: Map<string, string> = new Map<string, string>();
-  lastPunchTimeMessage:string='';
+  lastPunchTimeMessage: string = '';
 
-      /* Adding Punch Modal, Picked Date/Time/PunchType */
+  /* Adding Punch Modal, Picked Date/Time/PunchType */
   date = new Date();
   pickedPunchDate: { year: number, month: number, day: number } = { year: this.date.getFullYear(), month: this.date.getMonth() + 1, day: this.date.getDate() };
   pickedPunchTime: { hour: number, minute: number } = { hour: this.date.getHours(), minute: this.date.getMinutes() };
   viewDatePicker = false;
   viewTimePicker: boolean = false;
-  @ViewChild('punchModal', { static: true }) punchModal!: TemplateRef<any>;     
+  @ViewChild('punchModal', { static: true }) punchModal!: TemplateRef<any>;
   punchType: string = "office";
-  punchAddedSuccessfully:boolean = false;
-  punchNotAdded:boolean=false;
-
+  punchAddedSuccessfully: boolean = false;
+  punchNotAdded: boolean = false;
+  @ViewChild('deletePunchModal', { static: true }) deletePunchModal!: TemplateRef<any>;
+  punchToDelete!: Punch;
   constructor(private punchService: PunchService, private authService: AuthenticationService,
-     private modalService: NgbModal, private jasperService: JasperService, private userService: UserService) {}
+    private modalService: NgbModal, private jasperService: JasperService, private userService: UserService) { }
 
   ngOnInit() {
     this.getTheFirstDayOfTheWeek();
     this.fillWeeks();
     this.punchService.currentUsername.subscribe((data) => {
-      console.log("username pulled from punch serviceto atted: "+data);
+      console.log("username pulled from punch serviceto atted: " + data);
       this.currentUsername = data;
       this.getUserPunches()
     });
@@ -77,7 +79,7 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
 
   }
 
-    /* Get the current User Punches */
+  /* Get the current User Punches */
   async getUserPunches() {
     const startDate = this.weeks[0].toISOString().split("T")[0];
     const endDate = this.weeks[this.weeks.length - 1].toISOString().split("T")[0];
@@ -113,7 +115,9 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
             workHours[1] += diff[1];
           } else {              // Employee did not punch checkout for their working period
             let currentDate = new Date();
-            let currentTime = currentDate.getHours() + ':' + currentDate.getMinutes();
+            let currentHours = (currentDate.getHours() + '').length === 1 ? '0' + currentDate.getHours() : currentDate.getHours() + '';
+            let currentMinutes = (currentDate.getMinutes() + '').length === 1 ? '0' + currentDate.getMinutes() : currentDate.getMinutes() + ''
+            let currentTime = currentHours + ':' + currentMinutes;
             if (currentDate.toISOString().split('T')[0] === dayPunches[i].punchDate) {
               let diff = this.differentBetweenTwoTimes(dayPunches[i].punchTime, currentTime);
               workHours[0] += diff[0];
@@ -130,7 +134,9 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
             breakHours[1] += diff[1];
           } else {             // Employee did not punch checkout for their break period
             let currentDate = new Date();
-            let currentTime = currentDate.getHours() + ':' + currentDate.getMinutes();
+            let currentHours = (currentDate.getHours() + '').length === 1 ? '0' + currentDate.getHours() : currentDate.getHours() + '';
+            let currentMinutes = (currentDate.getMinutes() + '').length === 1 ? '0' + currentDate.getMinutes() : currentDate.getMinutes() + ''
+            let currentTime = currentHours + ':' + currentMinutes;
             if (currentDate.toISOString().split('T')[0] === dayPunches[i].punchDate) {
               let diff = this.differentBetweenTwoTimes(dayPunches[i].punchTime, currentTime);
               breakHours[0] += diff[0];
@@ -155,7 +161,7 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
     }
   }
 
-    /*Helper Method to calculate difference between two times ex. 12:00 to 14:45  */
+  /*Helper Method to calculate difference between two times ex. 12:00 to 14:45  */
   differentBetweenTwoTimes(start: string, end: string): number[] {
     const startHours = parseInt(start.substring(0, 2));
     const startMinutes = parseInt(start.substring(3, 5));
@@ -166,7 +172,7 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
     const endTotalMinutes = endHours * 60 + endMinutes;
     let difference = endTotalMinutes - startTotalMinutes;
     if (difference < 0) {
-      difference += 24 * 60; 
+      difference += 24 * 60;
     }
     // Convert the difference back to hours and minutes
     const diffHours = Math.floor(difference / 60);
@@ -200,10 +206,36 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
       this.punchService.UserEmailToAddPunchFromAdmin = data[0].email || '';
       this.punchService.currentUsername.next(this.punchService.getCurrentUserName())
     })
-}
+  }
 
   openPunchModal() {
     this.modalService.open(this.punchModal);
+  }
+
+  punchClicked(p: Punch) {
+    if (this.authService.isManager()) {
+      this.punchToDelete = p;
+      this.modalService.open(this.deletePunchModal)
+    }
+  }
+
+  deletePunch() {
+    if (this.authService.isManager()) {
+      if (this.punchToDelete) {
+        this.punchService.deletePunch(this.getUserEmailToAddPunchByAdmin(), this.punchToDelete.punchDate, this.punchToDelete.punchTime).subscribe({
+          next: () => {
+            this.getUserPunches();
+            this.modalService.dismissAll()
+            console.log("punchDeleted");
+
+          },
+          error: (err) => {
+            this.modalService.dismissAll(); console.log("punch not Deleted", err);
+
+          }
+        });
+      }
+    }
   }
 
   toggoleDatePicker(event: MouseEvent) {
@@ -216,8 +248,8 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
   }
 
 
-    /* Call the Add Punch API from Punch Service */
- async addPunch() {
+  /* Call the Add Punch API from Punch Service */
+  async addPunch() {
     const type = this.punchType;
     // Formating picked Date For The Punch
     const formattedMonth = this.pickedPunchDate.month.toString().length === 1 ? '0' + this.pickedPunchDate.month.toString() : this.pickedPunchDate.month.toString();
@@ -230,80 +262,118 @@ export class AttendanceComponent implements OnInit ,OnDestroy{
     const userEmail = this.getUserEmailToAddPunchByAdmin();
 
     console.log(punchDate, " ", punchTime, " ", userEmail, " ", punchTime, " ", type);
-    const currentDate = new Date(); 
-    if (this.punchService.UserEmailToAddPunchFromAdmin || this.authService.isManager()) 
-      { // If The User Is Admin, He can Add Punches With Date And Time
-      const lastPunch =  await this.punchService.getUserLastPunchByDateAndUserEmail(userEmail,punchDate).toPromise();
-      const lastPunchTime = lastPunch?.punchTime ? lastPunch.punchTime :(currentDate.getHours()+':'+currentDate.getMinutes());
-      const currentHour =currentDate.getHours()+':'+currentDate.getMinutes();
-      const diff =this.differentBetweenTwoTimes( lastPunchTime,currentHour);      
-      if(lastPunch && diff[0] <=0 && diff[1] <= 2  ){
-        this.lastPunchTimeMessage= `Cannot punch now: Last Punch ${lastPunch.punchDate}, ${this.formatPunchTime(lastPunch.punchTime)}`;
-        setTimeout(() => this.resetAlertMessages(), 3000);  
-      }
-      else {
-      this.punchService.addNewPunch(punchDate, punchTime, type, userEmail).subscribe({
-        next: (data) => {
-          console.log(data);
-          this.getUserPunches();
-          this.punchAddedSuccessfully = true;
+    const currentDate = new Date();
+    console.log("picked punch date", punchDate);
+
+    if (this.punchService.UserEmailToAddPunchFromAdmin || this.authService.isManager()) { // If The User Is Admin, He can Add Punches With Date And Time
+      const lastPunch = await this.punchService.getUserLastPunchByDateAndUserEmail(userEmail, punchDate).toPromise();
+
+      const lastPunchTime = lastPunch?.punchTime ? lastPunch.punchTime : null;
+
+      if (lastPunchTime && lastPunch?.punchTime) {
+        const diff = this.differentBetweenTwoTimes(lastPunchTime, punchTime);
+        console.log("diff", diff);
+        if (diff[0] <= 0 && diff[1] <= 2) {
+          this.lastPunchTimeMessage = `Cannot punch now: Last Punch ${lastPunch.punchDate}, ${this.formatPunchTime(lastPunch.punchTime)}`;
           setTimeout(() => this.resetAlertMessages(), 3000);
-        },
-        error: (error) => {
-          console.log(error);
-          this.punchNotAdded=true;
-          setTimeout(() => this.resetAlertMessages(), 3000);
+        } else {
+          this.punchService.addNewPunch(punchDate, punchTime, type, userEmail).subscribe({
+            next: (data) => {
+              console.log(data);
+              this.getUserPunches();
+              this.punchAddedSuccessfully = true;
+              setTimeout(() => this.resetAlertMessages(), 3000);
+            },
+            error: (error) => {
+              console.log(error);
+              this.punchNotAdded = true;
+              setTimeout(() => this.resetAlertMessages(), 3000);
+            }
+          });
         }
-      });
+      } else {
+        this.punchService.addNewPunch(punchDate, punchTime, type, userEmail).subscribe({
+          next: (data) => {
+            console.log(data);
+            this.getUserPunches();
+            this.punchAddedSuccessfully = true;
+            setTimeout(() => this.resetAlertMessages(), 3000);
+          },
+          error: (error) => {
+            console.log(error);
+            this.punchNotAdded = true;
+            setTimeout(() => this.resetAlertMessages(), 3000);
+          }
+        });
       }
     }
     else {  // Normal User, He can Specify the punch type only
-      const lastPunch =  await this.punchService.getUserLastPunchByDateAndUsername(this.currentUsername,punchDate).toPromise();
-      const lastPunchTime = lastPunch?.punchTime ? lastPunch.punchTime :(currentDate.getHours()+':'+currentDate.getMinutes());
-      const currentHour =currentDate.getHours()+':'+currentDate.getMinutes();
-      const diff =this.differentBetweenTwoTimes( lastPunchTime,currentHour);      
-      if(lastPunch && diff[0] <=0 && diff[1] <= 2  ){
-        this.lastPunchTimeMessage= `Cannot punch now: Last Punch ${lastPunch.punchDate}, ${this.formatPunchTime(lastPunch.punchTime)}`;
-        setTimeout(() => this.resetAlertMessages(), 3000);
-      }
-      else{
-      this.punchService.punchNow(this.punchType).subscribe({
-        next: (data) => {
-          console.log(data);
-          this.getUserPunches();
-          this.punchAddedSuccessfully = true;
+      const lastPunch = await this.punchService.getUserLastPunchByDateAndUsername(this.currentUsername, punchDate).toPromise();
+      const lastPunchTime = lastPunch?.punchTime ? lastPunch.punchTime : null;
+      if (lastPunch && lastPunchTime) {
+        let currentHours = (currentDate.getHours() + '').length === 1 ? '0' + currentDate.getHours() : currentDate.getHours() + '';
+        let currentMinutes = (currentDate.getMinutes() + '').length === 1 ? '0' + currentDate.getMinutes() : currentDate.getMinutes() + ''
+        let currentTime = currentHours + ':' + currentMinutes;
+        const diff = this.differentBetweenTwoTimes(lastPunchTime, currentTime);
+        if (diff[0] <= 0 && diff[1] <= 2) {
+          this.lastPunchTimeMessage = `Cannot punch now: Last Punch ${lastPunch.punchDate}, ${this.formatPunchTime(lastPunch.punchTime)}`;
           setTimeout(() => this.resetAlertMessages(), 3000);
-        },
-        error: (error) => {
-          console.log(error);
-          this.punchNotAdded=true;
-          setTimeout(() => this.resetAlertMessages(), 3000);
+        } else {
+          this.punchService.punchNow(this.punchType).subscribe({
+            next: (data) => {
+              console.log(data);
+              this.getUserPunches();
+              this.punchAddedSuccessfully = true;
+              setTimeout(() => this.resetAlertMessages(), 3000);
+            },
+            error: (error) => {
+              console.log(error);
+              this.punchNotAdded = true;
+              setTimeout(() => this.resetAlertMessages(), 3000);
+            }
+          });
         }
-      });
+      } else {
+        this.punchService.punchNow(this.punchType).subscribe({
+          next: (data) => {
+            console.log(data);
+            this.getUserPunches();
+            this.punchAddedSuccessfully = true;
+            setTimeout(() => this.resetAlertMessages(), 3000);
+          },
+          error: (error) => {
+            console.log(error);
+            this.punchNotAdded = true;
+            setTimeout(() => this.resetAlertMessages(), 3000);
+          }
+        });
+      }
     }
   }
-}
 
 
-    /* Method Returns The Email The adamin Wants To Add Punch For, Or the Current Username */
+  /* Method Returns The Email The adamin Wants To Add Punch For, Or the Current Username */
   getUserEmailToAddPunchByAdmin(): string {
     if (this.punchService.UserEmailToAddPunchFromAdmin) { // For The Admin When He Navigates To This Component From The Home Component, Picking Another User Email
       return this.punchService.UserEmailToAddPunchFromAdmin;
     }
-    else if(this.authService.isManager()){  // If the admin refresh the page and he want to add a punch for him, view his email
+    else if (this.authService.isManager()) {  // If the admin refresh the page and he want to add a punch for him, view his email
       this.userService.getUsersContaingName(this.punchService.getCurrentUserName()).subscribe((data) => {
         this.punchService.UserEmailToAddPunchFromAdmin = data[0].email || '';
-             })
-             return this.punchService.UserEmailToAddPunchFromAdmin;
+      })
+      return this.punchService.UserEmailToAddPunchFromAdmin;
     }
-  else{  // For Normal User
+    else {  // For Normal User
       return this.currentUsername;
     }
   }
 
+
+
+
   ngOnDestroy(): void {
-    this.punchService.UserEmailToAddPunchFromAdmin='';
-}
+    this.punchService.UserEmailToAddPunchFromAdmin = '';
+  }
 
   getWorkReminders(): string | undefined {
     const currentDate = new Date().toISOString().split("T")[0];
